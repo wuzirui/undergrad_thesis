@@ -213,9 +213,12 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 虽然多平面的方法可以对一个简单场景进行高效、准确的表示学习，但我们发现，当场景规模逐渐从物体、室内场景基本扩展到室外自动驾驶大场景下时，使用单一的多平面场景表示反而会产生退化的效果。在本文中，我们将提出一种混合场景表示方法，使得即便在更大规模的复杂场景中，依然可以用较小的存储空间获得准确的场景表示。
 
 \newpage
-\section{真实感的神经渲染方法改进}
+\section{真实感的神经渲染方法：场景扭曲变换}
 \label{sec: related-work realistic rendering}
-除了使用不同的场景表示方法外，为了实现更真实的渲染效果，研究者还在其他方面做出了改进。
+除了使用不同的场景表示方法外，为了实现更真实的渲染效果，研究者还在其他方面做出了改进。其中，最为典型的方法是将三维欧式空间通过变换，映射到扭曲后的参数空间。
+
+通常来讲，在场景图片数据集中，场景的内容在三维空间上并不是均匀分布的，如在前向观察的数据集中，通常场景内容随着深度的增加而反比例下降；在无边界、物体中心的数据集中，场景内容随着空间点到物体中心距离的增加而下降。因此，若能将在原始三维欧式空间中非均匀分布的空间点映射到一个均匀分布，则将能大大提升场景表示的利用率，从而提高渲染真实感。
+
 \subsection{位置编码}
 \label{sec: related-work positional encoding}
 
@@ -235,6 +238,8 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \end{figure}
 
 图\ref{fig:related-work nerf-PE-ablation}中展示了去掉位置编码后对NeRF网络渲染图片的效果影响。由图可以看出，去除高频位置信息后，NeRF网络很难表示图片中的高维几何细节，从而表现出“模糊”的特点。
+
+从本质上，NeRF的位置编码实质上也是一个扭曲变换，将信息分布不均匀的空域映射到更加均匀的频域空间。
 
 \subsection{基于Mip的反走样神经渲染}
 尽管神经辐射场\cite{mildenhall_nerf_2020}及其变体\cite{muller_instant_2022,martin-brualla_nerf_2021,zhang_nerf_2020}在视图合成任务中展示了令人印象深刻的结果，但 NeRF 的渲染模型存在缺陷：当训练图像以多种分辨率观察场景内容，或分别从远处和近处观察同一位置时，NeRF的渲染在近景视图中显得过于模糊，并且在远景视图中包含混叠伪影。其原因在于NeRF将一个像素抽象为一个无穷小的没有面积的三维点，然而在真实世界中，像素在空间上占有一定的面积，从而相机发出的“光线”实际上应该表示为一个圆锥体（如图\ref{fig:related-work mip-nerf cone tracing}所示）。式\ref{eq: related-work volume rendering}中的NeRF渲染公式仅在一条射线上积分所有的辐射值，使用线积分的结果代替了视锥中全部三维点的重积分:
@@ -288,10 +293,33 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 图\ref{fig:related-work mip-nerf results}展示了Mip-NeRF使用IPE后与其他模型在渲染低分辨率图像时的效果对比。在全分辨率图像上训练的 NeRF 能够在新的视图位置生成逼真的渲染图，但仅限于训练图像的分辨率或比例；将相机向后拉并放大（或类似地，调整相机内在特性以降低图像分辨率）会导致呈现出严重的锯齿现象；在多分辨率图像上训练 NeRF 可以稍微改善这个问题，但会导致跨尺度渲染质量差：全分辨率模糊，低分辨率出现“锯齿”； Mip-NeRF也在多分辨率图像上训练，但能够在不同尺度上生成逼真的渲染。
 
 \subsection{无界场景表示}
-mip-nerf 360
+相比原始的位置编码和Mip-NeRF中的集成位置编码，Mip-NeRF中的无界场景映射则是一种更加直观的扭曲映射方法。
 
+由于透视投影，远离相机放置的物体将占据图像平面的一小部分，但如果放置在附近，则会占据更多图像并且细节可见。因此，理想的 3D 场景参数化应该为附近的内容分配更多的容量，为远处的内容分配更少的容量。
+
+最初的 NeRF 论文侧重于从360$^\circ$捕获具有蒙版背景的对象以及所有图像面向大致相同方向的正面场景(也称作Forward-Facing)。对于蒙面物体，NeRF 直接参数化 3D 欧几里得空间中的场景，但对于正面场景，NeRF 使用投影空间中定义的坐标（归一化设备坐标，或“NDC”空间）。通过将无限深的相机视锥变形为有界立方体，其中沿 z 轴的距离对应于视差（反距离），NDC 以与透视投影的几何形状一致的方式有效地重新分配 NeRF MLP 的容量。然而，在所有方向上都是无界的场景，而不仅仅是在一个方向上，需要不同的参数化。 不同于NeRF++\cite{zhang_nerf_2020}使用额外的网络对远处的物体进行建模，在Mip-NeRF 360\cite{barron_mip-nerf_2022}中，将这个想法扩展到 Mip-NeRF 并提出了一种将任何平滑参数化应用于体积的无界场景参数化方法。
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/mipnerf360-contraction.png}
+    \caption{Mip-NeRF 360的无界场景压缩的二维示意图}
+    \label{fig:related-work-unbounded-contraction}
+\end{figure}
+
+如图\ref{fig:related-work-unbounded-contraction}所示，对于任意一个输入坐标$x\in\mathbb{R}^3$，Mip-NeRF 360将输入坐标通过下面的公式映射到一个半径为2的球面内：
+\begin{equation}
+    \mathtt{contract}(\mathbf{x}) = \left\{\begin{matrix}&\mathbf{x}&||\mathbf{x}||<1\\&(2-\frac{1}{||\mathbf{x}||})(\frac{\mathbf{x}}{||\mathbf{x}||})&||\mathbf{x}||\geq1\end{matrix}\right.
+\end{equation}
+
+\subsection{小结}
+在本节中，我们介绍了使用场景扭曲变换提高场景表示模型利用率的几种方法，然而目前的扭曲变换方法无法解决在更大规模的室内、室外复杂场景的高效表达，因而限制了神经隐式场在自动驾驶等领域的发展。在本文中我们提出基于神经点云的场景扭曲变换，使得场景表示可以自适应地拟合大规模场景。
+
+
+\newpage
 \section{辐射-距离混合隐式场}
 \label{sec: related-work density-distance fields}
+在本章的前两节中，我们介绍了以神经辐射场的神经场景表示的发展，然而单一的辐射场景表示对于场景几何的建模能力较差。在本节中，我们将首先分析辐射场这一不足的原因，接着分别从采样策略、体渲染模型、多元传感信息融合和混合隐式场优化的几个方面介绍辐射-距离混合隐式场。
+
 \subsection{神经辐射场的形状-辐射二义性}
 
 \subsection{采样策略}
