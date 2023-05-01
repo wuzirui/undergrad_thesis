@@ -15,7 +15,7 @@
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/NeRF setting.pdf}
-    \caption{使用神经辐射场进行新视角合成的基本流程}
+    \caption{使用神经辐射场\cite{mildenhall_nerf_2020}进行新视角合成的基本流程}
     \label{fig:related-work novel-view-synthesis-task}
 \end{figure}
 
@@ -45,7 +45,7 @@
 \begin{figure}[t]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/NeRF method.pdf}
-    \caption{使用神经辐射场进行训练和渲染的总体流程}
+    \caption{使用神经辐射场\cite{mildenhall_nerf_2020}进行训练和渲染的总体流程}
     \label{fig:related-work NeRF pipeline}
 \end{figure}
 
@@ -61,7 +61,7 @@
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/related-work/deepSDF.pdf}
-    \caption{DeepSDF网络结构的两种形式：左侧为一般情形下直接拟合物体的SDF隐函数；右侧是带有类别编码的SDF函数。}
+    \caption{DeepSDF\cite{park_deepsdf_2019}网络结构的两种形式：左侧为一般情形下直接拟合物体的SDF隐函数；右侧是带有类别编码的SDF函数。}
     \label{fig:related-work DeepSDF}
 \end{figure}
 
@@ -93,7 +93,7 @@
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/plenoxels.pdf}
-    \caption{Plenoxels 方法流程图}
+    \caption{Plenoxels\cite{fridovich-keil_plenoxels_2022} 方法流程图}
     \label{fig:related-work plenoxels pipeline}
 \end{figure}
 
@@ -102,7 +102,7 @@
 \begin{figure}[h]
     \centering
     \includegraphics[width=.5\textwidth]{undergraduate-thesis/images/related-work/plenoxels-result.pdf}
-    \caption{Plenoxels和原始NeRF的性能对比}
+    \caption{Plenoxels\cite{fridovich-keil_plenoxels_2022}和原始NeRF\cite{mildenhall_nerf_2020}的性能对比}
     \label{fig:related-work plenoxels-result}
 \end{figure}
 
@@ -132,7 +132,7 @@ $\mathtt{floor}$为下取整函数，$\mathtt{concat}$表示参数拼接。
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/monosdf-result.pdf}
-    \caption{使用多层感知机、密集体素网格、体素特征网格和多分辨率体素特征网格进行场景SDF学习的结果}
+    \caption{使用多层感知机、密集体素网格、体素特征网格和多分辨率体素特征网格进行场景SDF学习的结果\cite{yu_monosdf_2022}。}
     \label{fig:related-work monosdf result}
 \end{figure}
 
@@ -144,7 +144,7 @@ $\mathtt{floor}$为下取整函数，$\mathtt{concat}$表示参数拼接。
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/instantngp.pdf}
-    \caption{InstantNGP 方法流程图}
+    \caption{InstantNGP\cite{muller_instant_2022} 方法流程图}
     \label{fig:related-work instantngp}
 \end{figure}
 
@@ -166,7 +166,7 @@ $T, \pi^l$为随机大质数。
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/Tensor Decomp.png}
-    \caption{张量分解。左图：CP 分解，它将张量分解为向量外积之和。右图：TensoRF的向量矩阵分解，它将张量分解为向量矩阵外积的总和。}
+    \caption{张量分解\cite{chen_tensorf_2022}。左图：CP 分解，它将张量分解为向量外积之和。右图：TensoRF的向量矩阵分解，它将张量分解为向量矩阵外积的总和。}
     \label{fig:related-work tensor-decomp}
 \end{figure}
 
@@ -186,7 +186,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/kplanes-teaser.pdf}
-    \caption{$d$ 维空间的平面分解示意图}
+    \caption{$d$ 维空间的平面分解示意图\cite{fridovich-keil_k-planes_2023}。}
     \label{fig:related-work kplane-teaser}
 \end{figure}
 
@@ -197,7 +197,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/hadamard-product.png}
-    \caption{平面特征的逐元素加法（左）与乘法（右）的比较。在这两种情况下，假设每个平面中只有单个条目为+1，其余部分均为零，通过乘法可以选择单个 3D 点，但通过加法只能产生相交线。这说明乘法可以提高显式模型的表达能力。}
+    \caption{平面特征的逐元素加法（左）与乘法（右）的比较。在这两种情况下，假设每个平面中只有单个条目为+1，其余部分均为零，通过乘法可以选择单个 3D 点，但通过加法只能产生相交线。这说明乘法可以提高显式模型的表达能力\cite{fridovich-keil_k-planes_2023}。}
     \label{fig:related-work hadamard-product}
 \end{figure}
 
@@ -233,7 +233,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/NeRF ablation-PE.pdf}
-    \caption{位置编码对NeRF网络性能的影响。}
+    \caption{位置编码对NeRF网络性能的影响\cite{mildenhall_nerf_2020}。}
     \label{fig:related-work nerf-PE-ablation}
 \end{figure}
 
@@ -251,7 +251,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/related-work/mipnerf-intersection.png}
-    \caption{NeRF方法产生走样原因的示意图。}
+    \caption{NeRF方法产生走样原因的示意图\cite{barron_mip-nerf_2021}。}
     \label{fig:related-work mip-nerf intersection}
 \end{figure}
 
@@ -260,7 +260,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/mipnerf-cone.png}
-    \caption{NeRF (a) 沿着从相机投影中心通过每个像素的光线进行采样，然后使用位置编码 (PE) $\gamma$ 对这些点进行编码以产生特征$\gamma(x)$。 Mip-NeRF (b) 对由相机像素定义的 3D 圆锥台进行推理，使用集成位置编码 (IPE) 对这些锥形截锥体进行特征化，使用多元高斯近似截锥体，然后计算积分 $E[\gamma(x)]$以近似超采样的效果。}
+    \caption{NeRF (a) 沿着从相机投影中心通过每个像素的光线进行采样，然后使用位置编码 (PE) $\gamma$ 对这些点进行编码以产生特征$\gamma(x)$。 Mip-NeRF (b) 对由相机像素定义的 3D 圆锥台进行推理，使用集成位置编码 (IPE) 对这些锥形截锥体进行特征化，使用多元高斯近似截锥体，然后计算积分 $E[\gamma(x)]$以近似超采样的效果\cite{barron_mip-nerf_2021}。}
     \label{fig:related-work mip-nerf cone tracing}
 \end{figure}
 
@@ -268,7 +268,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/mipnerf-encoding.png}
-    \caption{NeRF（左）和集成位置编码（IPE）（右）的一维可视化。由于 NeRF 沿每条射线对点进行采样并对所有频率进行同等编码，因此高频 PE 特征混叠，从而导致渲染伪影。通过在每个区间上使用集成位置编码特征，当频率周期与被集成的间隔大小相近时，IPE特征的高频维度缩小到零，从而产生隐式编码大小的抗锯齿特征。}
+    \caption{NeRF（左）和集成位置编码（IPE）（右）的一维可视化。由于 NeRF 沿每条射线对点进行采样并对所有频率进行同等编码，因此高频 PE 特征混叠，从而导致渲染伪影。通过在每个区间上使用集成位置编码特征，当频率周期与被集成的间隔大小相近时，IPE特征的高频维度缩小到零，从而产生隐式编码大小的抗锯齿特征。\cite{barron_mip-nerf_2021}}
     \label{fig:related-work mip-nerf encoding}
 \end{figure}
 
@@ -286,7 +286,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/related-work/mipnerf-multi-scale.png}
-    \caption{Mip-NeRF 和基线模型在不同图片分辨率上渲染的效果对比。}
+    \caption{Mip-NeRF\cite{barron_mip-nerf_2021} 和基线模型在不同图片分辨率上渲染的效果对比。}
     \label{fig:related-work mip-nerf results}
 \end{figure}
 
@@ -302,7 +302,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/mipnerf360-contraction.png}
-    \caption{Mip-NeRF 360的无界场景压缩的二维示意图}
+    \caption{Mip-NeRF 360\cite{barron_mip-nerf_2022}的无界场景压缩的二维示意图}
     \label{fig:related-work-unbounded-contraction}
 \end{figure}
 
@@ -328,7 +328,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/shape-radiance ambiguity.png}
-    \caption{辐射-距离二义性示意图}
+    \caption{辐射-距离二义性示意图\cite{zhang_nerf_2020}}
     \label{fig:related-work shape-radiance ambiguity}
 \end{figure}
 
@@ -339,30 +339,95 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \begin{figure}[t]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/sdfstudio.png}
-    \caption{混合隐式场中各个组件的相关研究工作}
+    \caption{混合隐式场中各个组件的相关研究工作\cite{yu_sdfstudio_2022}}
     \label{fig:related-work sdfstudio}
 \end{figure}
 
 \subsection{采样策略}
 \subsubsection{分层采样}
 \label{sec: coarse-to-fine sampling}
-NeRF
+在原始NeRF中，为了估计体渲染积分（公式\ref{eq: related-work volume rendering}），使用了由粗到精的分层采样策略：首先将$[t_n,t_f]$划分为N个均匀分布的区间，然后从每个区间内随机均匀地抽取一个样本（如式\ref{eq: related-work coarse-sampling}），将这些样本通过粗网络后根据体密度分布进行重要性重采样得到精细样本，最后将两次抽取的采样点通过精细网络进行渲染。
+\begin{equation}
+    t_i\sim\mathcal{U}\left[t_n+\frac{i-1}{N}(t_f-t_n), t_n+\frac{i}{N}(t_f-t_n)\right]
+    \label{eq: related-work coarse-sampling}
+\end{equation}
+
+在NeuS\cite{wang_neus_2021}中，进一步改良了这种基于重要性的分层采样，使用同一网络进行多次的分层抽取采样点，来实现在表面出更多采样，而在自由空间中减少采样的目的。
+
+
 \subsubsection{隐式表面引导的采样}
+在混合隐式表达中，由于隐式表面模型建模了三维点到表面的距离信息，而隐式表面模型的关键假设是只有与表面的第一个交点处的区域对渲染方程有贡献。我们可以较为方便地通过射线传播模型求解表面坐标$\mathbf{x}_s$\cite{niemeyer_differentiable_2020}。
+
+UNISURF\cite{oechsle_unisurf_2021}在早期迭代期间，会使用类似NeRF中的粗采样策略在整个体积空间中随机采样。在后期的迭代中，样本点采样会更靠近估计的表面。由于可以通过求根法\cite{niemeyer_differentiable_2020}直接从占用场估计表面，因此无需像 NeRF 中那样进行分层两阶段采样。
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/unisurf-sampling.png}
+    \caption{UNISURF\cite{oechsle_unisurf_2021}采样策略示意图}
+    \label{fig:related-work unisurf-sampling}
+\end{figure}
 
 \subsubsection{基于误差的采样}
+VolSDF\cite{yariv_volume_2021}中给出了使用符号距离场估计的不透明度$\hat{O}$的估计误差的上界:
+\begin{equation}
+    |O(t)-\hat{O}(t)|\leq B_{\mathcal{T},\beta}
+\end{equation}
 
+其中$B_{\mathcal{T},\beta}<\varepsilon$存在两种可能性：
+\begin{enumerate}
+    \item 当超参数$\beta$固定时，对于任意给定$\varepsilon$，总存在一个足够稠密的采样点集$\mathcal{T}$使得$B_{\mathcal{T},\beta}<\varepsilon$
+    \item 当采样点数目$n$固定时，对于任意给定$\varepsilon$，总存在一个足够大的$\beta$使得$B_{\mathcal{T},\beta}<\varepsilon$:
+    \begin{equation}
+        \beta\geq\frac{\alpha t_f^2}{4(n-1)\log(1+\varepsilon)}.
+        \label{eq: related-work volsdf beta-error}
+    \end{equation}
+\end{enumerate}
+
+基于这一观察，VolSDF设计了一个基于误差的重采样方法：首先使用均匀采样获得初始采样点集$\mathcal{T}=\mathcal{T}_0$，通过公式\ref{eq: related-work volsdf beta-error}计算出所需要的$\beta_+$使得误差在要求范围内，接着迭代地对采样点集进行上采样，并逐步减少$\beta$直至收敛。
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/volsdf-sampling.png}
+    \caption{VolSDF\cite{yariv_volume_2021}基于误差的重采样过程。}
+    \label{fig:related-work volsdf-sampling}
+\end{figure}
+
+图\ref{fig:related-work volsdf-sampling}展示了VolSDF采样的迭代过程，经过数次上采样后，网络可以以很少的采样点对不透明度进行准确的估计，使得误差在要求范围内。VolSDF得到的场景几何如图\ref{fig:related-work volsdf-result}所示，由图可见VolSDF可以产生比NeRF更加准确的场景几何。
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{undergraduate-thesis/images/volsdf-result.png}
+    \caption{VolSDF\cite{yariv_volume_2021}的场景几何。}
+    \label{fig:related-work volsdf-result}
+\end{figure}
 
 \subsubsection{基于Proposal网络的采样}
-MipNeRF 360
+Mip-NeRF\cite{barron_mip-nerf_2021}使用从粗到精的重采样策略，其中 MLP 使用“粗”射线间隔评估一次，然后使用“精细”射线间隔再次评估，并在两个级别上使用图像重建损失进行监督。而Mip-NeRF 360\cite{barron_mip-nerf_2022}中则在此基础上进行了改进，使用两个MLP：一个NeRF场景表示模型，以及一个Proposal网络，其中Proposal网络根据输入空间坐标预测体密度，被用来作为重采样的基准。
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/mip-nerf360 proposal network.png}
+    \caption{Mip-NeRF 360\cite{barron_mip-nerf_2022} 结构示意图。}
+    \label{fig:related-work proposal network}
+\end{figure}
+
+如图\ref{fig:related-work proposal network}所示，Mip-NeRF 使用一个多尺度 MLP，该 MLP 被反复查询来获取权重，这些权重被重新采样到下一阶段的间隔中，并监督在所有尺度上生成的渲染。Mip-NeRF 360使用“Proposal MLP”，在渲染阶段，使用“NeRF MLP”来生成权重和颜色来渲染图像。Proposal MLP 被训练以产生与 NeRF MLP 的 w 输出一致的Proposal权重$\hat{w}$。通过使用小型Proposal MLP 和大型 NeRF MLP，Mip-NeRF 360获得了一个具有高容量且易于训练的组合模型。
 
 \subsubsection{基于Occupancy的网格采样}
+为了提升采样效率，InstantNGP\cite{muller_instant_2022}提出使用基于占用网格的采样：当沿着光线行进进行训练和渲染时，InstantNGP希望放置样本，使它们对图像的贡献尽量均匀，从而最大限度地减少计算浪费。因此，他们通过维护一个粗略标记空与非空空间的占用网格来集中表面附近的样本。
 
 \subsection{体渲染方法}
-\subsubsection{基于辐射场的体渲染方法}
-
-\subsubsection{以UniSuRF为代表的体渲染方法}
+混合隐式场景表示中，为了同时优化符号距离场和神经辐射场，通常需要将符号距离转换成体密度来进行体积渲染，然而这一映射过程并不唯一，在这一部分中，我们介绍两种比较常见的映射。
 
 \subsubsection{以VolSDF为代表的体渲染方法}
+在体积渲染过程中，体密度$\sigma(\mathbf{x})$是一个$\mathbb{R}^3\to\mathbb{R}_+$的隐式标量函数，其值表达了光在$\mathbf{x}$点被阻挡的概率密度，也表示了该点处物体粒子的密集程度。在VolSDF\cite{yariv_volume_2021}中，作者通过一个闭式函数将符号距离值映射为体密度：
+\begin{equation}
+    \sigma(\mathbf{x}) = \alpha\Psi_\beta(-d_\Omega(\mathbf{x})),
+    \label{eq: related-work volsdf equation}
+\end{equation}
+其中$\alpha,\beta$为超参数。
+
+直观地说，体密度$\sigma$ 模拟了一个具有恒定密度$\alpha$的均匀物体，它在物体边界附近平滑减小，其中平滑程度由$\beta$控制。在式\ref{eq: related-work volsdf equation}中定义密度的好处有两方面：首先，它为表面几何形状$\mathcal{M}$提供了有用的归纳偏置，并提供了重建表面的原则性方法，即作为$\text{d}\Omega$的零值面。其次，式中定义的密度的特定形式有助于限制渲染体积的不透明度（或等效的透明度）误差，这是体积渲染管线中的一个重要组成部分。在前面的章节中，我们探讨了$\beta$的大小对于重建误差$\varepsilon$的控制作用。
 
 \subsubsection{以NeuS为代表的体渲染方法}
 
