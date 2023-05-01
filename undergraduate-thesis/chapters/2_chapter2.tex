@@ -334,6 +334,15 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 
 如图\ref{fig:related-work shape-radiance ambiguity}所示，假设一个二维曲面$S^*$的形状为图中所示，相机$C_0, C_1$分别从不同角度观察曲面上一点，由图可以看出，如果网络实际学到的几何形状为图中$\hat{S}$所代表的单位圆，而将$C_0, C_1$观察到的颜色“贴”在单位圆上。这样即使网络学习到的几何与真实几何形状完全不同，也可以渲染出真实感的颜色。这种二义性被叫做“形状-辐射二义性”\cite{zhang_nerf_2020}，因而由辐射场建模的场景几何通常被认为是欠约束的。
 
+基于这一观察，近年来，研究者提出同时优化辐射和距离场，并在体渲染过程中将这两个完全不同的隐式场的输出进行融合\cite{oechsle_unisurf_2021,gropp_implicit_2020,yariv_multiview_2020,yariv_volume_2021,wang_neus_2021,shao_doublefield_2022,darmon_improving_2022,ueda_neural_2022,long_sparseneus_2022,yu_monosdf_2022,wang_pet-neus_2023,yuan_monocular_2023,liang_hr-neus_2023,chen_dehazenerf_2023,zhu_vdn-nerf_2023,azinovic_neural_2022, sun_neural_2022}。 简单来说，就是将神经符号距离场（Neural SDF）通过几何变换转换为辐射场中体密度的过程。然而，由于这两种隐式场天然的差距，这一融合并不是一件易事。为了弥补隐式场直接的领域差距，研究者在采样策略\cite{yariv_volume_2021, mildenhall_nerf_2020, barron_mip-nerf_2022, oechsle_unisurf_2021}，体渲染方法\cite{oechsle_unisurf_2021,yariv_volume_2021,wang_neus_2021}，融合多元传感信息\cite{azinovic_neural_2022,yu_monosdf_2022}和隐式场优化进行了大量的研究工作，如图\ref{fig:related-work sdfstudio}所示\cite{yu_sdfstudio_2022}。
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/sdfstudio.png}
+    \caption{混合隐式场中各个组件的相关研究工作}
+    \label{fig:related-work sdfstudio}
+\end{figure}
+
 \subsection{采样策略}
 \subsubsection{分层采样}
 \label{sec: coarse-to-fine sampling}
