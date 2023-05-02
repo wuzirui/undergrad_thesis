@@ -10,4 +10,41 @@ NeRF\cite{mildenhall_nerf_2020}将一个三维场景表示为一个隐式函数�
 
 另一种方式则是通过引入多元传感器信息输入作为额外监督信号。现有神经辐射场方法使用图片和其相机位姿作为网络输入，使用渲染颜色和真实观测颜色作为监督信号构建损失函数。通过反向传播损失函数值来优化多层感知机网络。注意到辐射场中的体积渲染方法同样可以用来计算累计深度值，为了改善该神经网络的表示精度，现有方法通过引入深度传感信息来构建额外的监督信号\cite{deng_depth-supervised_2022, roessle_dense_2022, azinovic_neural_2022}。
 
-虽然这两种方法在一定程度上都可以
+虽然这两种方法在一定程度上都可以弥补形状-辐射二义性，但目前的两种技术路线都不能在更大规模场景重建准确的场景几何。本文尝试将多元传感信息，特别是深度传感数据融入重建过程。然而，简单地使用深度误差优化混合隐式场存在二义性误差。在本文中，我们首先分析将这两种技术路线相结合所带来的误差。并提出基于全方向距离场的混合隐式场景表征方法。
+
+\section{混合隐式场内在二义性}
+符号距离场衡量了一个三维空间中的三维点到其最近表面的符号距离，而当符号距离函数被应用在体积渲染过程中时，通常需要显式地将距离函数值映射为体积密度或累计权重。在本文中，我们以NeuralRGB-D\cite{azinovic_neural_2022}所提出的映射方案作为示例：
+\begin{equation}
+    w_i = \sigma\left(\frac{f_{TSDF}(t)}{\mathtt{trunc}}\right)\cdot\sigma\left(-\frac{f_{TSDF}(t)}{\mathtt{trunc}}\right),
+    \label{eq: omninerf-basedline-weighting}
+\end{equation}
+其中$f_{TSDF}$为神经截断符号距离函数，这个映射将符号距离函数值映射为体积积分中的点权重，$\sigma$为任意选取的钟形单峰对称函数，这里使用$\mathtt{sigmoid}$函数。这个权重分配函数在一维上的可视化如图\ref{fig:omninerf-baseline-weighting}所示。
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/neural-rgbd weighting function.png}
+    \caption{公式\ref{eq: omninerf-basedline-weighting}所计算的权重函数分布。}
+    \label{fig:omninerf-baseline-weighting}
+\end{figure}
+
+通过公式可以看出，距离函数较小的值将被赋予更大的体渲染权重。当距离函数通过这一函数映射到点权重后，我们可以将体积渲染公式改写为：
+\begin{equation}
+    \hat{C}(r) = \frac 1 {\sum_{i=0}^{N-1}w_i}\sum_{i=0}^{N-1}w_i\cdot c_i
+\end{equation}
+
+在这样的框架下， 我们描述一种由混合隐式场方案引起的系统误差。
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/omninerf-error2.pdf}
+    \caption{混合隐式场内在误差}
+    \label{fig:omninerf-internal error}
+\end{figure}
+
+\section{结合深度输入的混合隐式场二义性}
+
+
+\section{基于全方向距离场的混合隐式场表征}
+
+
