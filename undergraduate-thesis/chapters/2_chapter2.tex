@@ -321,6 +321,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 在本章的前两节中，我们介绍了以神经辐射场的神经场景表示的发展，然而单一的辐射场景表示对于场景几何的建模能力较差。在本节中，我们将首先分析辐射场这一不足的原因，接着分别从采样策略、体渲染模型、多元传感信息融合和混合隐式场优化的几个方面介绍辐射-距离混合隐式场。
 
 \subsection{神经辐射场的形状-辐射二义性}
+\label{sec: related-work shape-radiance ambiguity}
 在没有正则化的情况下，NeRF\cite{mildenhall_nerf_2020}对仅依赖于视图的外观进行建模的能力导致 3D 形状和辐射之间存在一个二义性，使得网络可以接受退化的内在形状，而渲染出真实感颜色。对于任意的、不正确的形状，可以证明存在一组辐射场可以完美地解释训练图像，但不能很好地推广到新的测试视图。
 
 为了说明这种歧义，假设对于给定的场景，我们将几何体表示为一个单位球体。换句话说，让我们将 NeRF 的不透明度场固定为在单位球体表面为 1，在其他地方为 0。然后，对于每个训练图像中的每个像素，我们将穿过该像素的光线与球体相交，并将交点处（以及沿光线方向）的辐射值定义为该像素的颜色。这个人工构造的解决方案是一个有效的 NeRF 重建，它完美地适合输入图像。
@@ -328,7 +329,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/shape-radiance ambiguity.png}
-    \caption{辐射-距离二义性示意图\cite{zhang_nerf_2020}}
+    \caption{形状-辐射二义性示意图\cite{zhang_nerf_2020}}
     \label{fig:related-work shape-radiance ambiguity}
 \end{figure}
 
@@ -344,6 +345,8 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \end{figure}
 
 \subsection{采样策略}
+神经辐射场中首次将隐式表达用于体积渲染积分的管线中，然而在计算机实现中我们必须对体积积分进行离散化，使用有限的采样点最大限度地还原连续体积中的密度分布。因此，选取合适数量、位置的采样点对于隐式场场景表示学习格外重要。在本节中，我们首先介绍NeRF\cite{mildenhall_nerf_2020}中的分层采样方法，接着介绍后续工作中对该方法的改进。
+
 \subsubsection{分层采样}
 \label{sec: coarse-to-fine sampling}
 在原始NeRF中，为了估计体渲染积分（公式\ref{eq: related-work volume rendering}），使用了由粗到精的分层采样策略：首先将$[t_n,t_f]$划分为N个均匀分布的区间，然后从每个区间内随机均匀地抽取一个样本（如式\ref{eq: related-work coarse-sampling}），将这些样本通过粗网络后根据体密度分布进行重要性重采样得到精细样本，最后将两次抽取的采样点通过精细网络进行渲染。
@@ -430,21 +433,104 @@ Mip-NeRF\cite{barron_mip-nerf_2021}使用从粗到精的重采样策略，其中
 直观地说，体密度$\sigma$ 模拟了一个具有恒定密度$\alpha$的均匀物体，它在物体边界附近平滑减小，其中平滑程度由$\beta$控制。在式\ref{eq: related-work volsdf equation}中定义密度的好处有两方面：首先，它为表面几何形状$\mathcal{M}$提供了有用的归纳偏置，并提供了重建表面的原则性方法，即作为$\text{d}\Omega$的零值面。其次，式中定义的密度的特定形式有助于限制渲染体积的不透明度（或等效的透明度）误差，这是体积渲染管线中的一个重要组成部分。在前面的章节中，我们探讨了$\beta$的大小对于重建误差$\varepsilon$的控制作用。
 
 \subsubsection{以NeuS为代表的体渲染方法}
+然而，VolSDF所提出的经验性公式没有考虑到光线上点的先后关系，经过转换的体密度值在计算权重时也会出现偏差。NeuS\cite{wang_neus_2021}方法基于这样的观察，提出任何的转换函数$g$应满足的两个条件：
+\begin{enumerate}
+    \item \textbf{无偏性}：对于任意给定射线$\mathbf{r}(t)$，经由转换映射计算出的体密度通过体积渲染得到的点权重$w(t)$应在物体表面处的权重取得极大值，即在表面$t^*$($f_\text{SDF}(t^*)$)处有$\sigma'(t) = 0$；
+    \item \textbf{遮挡感知}：当空间中两点$P_i$,$P_j$分别对应深度$t_i$,$t_j$满足$f_{SDF} (P_i )=f_{SDF} (P_j ),t_i<t_j$，则在渲染时须有权重$w_i>w_j$。
+\end{enumerate}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{undergraduate-thesis/images/neus conditions.png}
+    \caption{NeuS\cite{wang_neus_2021}中提出的SDF到体密度映射函数的两个必要条件。左图所展示的传统解决方案并不能满足无偏性和遮挡感知的条件。}
+    \label{fig: related-work neus conditions}
+\end{figure}
+
+如图\ref{fig: related-work neus conditions}所示，传统方法不能满足无偏和遮挡感知，因而NeuS提出了如下的转换方案：
+\begin{equation}
+    \sigma(t) = \max\left(\frac{-\frac{\text{d}\Phi_s}{\text{d}t}(f_{SDF}(t)}{\Phi_s(f_{SDF}(t))}, 0\right),
+    \label{eq: related-work neus function}
+\end{equation}
+其中$\Phi_s$为Sigmoid函数的一阶导函数。
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/neus multiple-surfaces.png}
+    \caption{当射线和多个表面相交时，NeuS\cite{wang_neus_2021}提出的映射方案可以解决遮挡感知问题。}
+    \label{fig:related-work occlusion-aware}
+\end{figure}
+
+可以证明，式\ref{eq: related-work neus function}中所示的映射函数可以满足其所提出的无偏性和遮挡感知要求。
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\textwidth]{undergraduate-thesis/images/neural-rgbd comparison with NeRF.png}
+    \caption{直接将NeRF方法添加深度监督损失函数不能解决形状-辐射二义性。}
+    \label{fig:related-work neural-rgbd comparison with NeRF}
+\end{figure}
 
 \subsection{多元传感信息融合}
+虽然混合隐式表达在学习复杂场景信息时以及能在准确性上得到很大的提升，然而对于特征较少的墙面、纹理重复的表面，基于纯视觉的场景表示的精度仍然较差，一个直接的想法是使用深度传感器\cite{zabatani_intel_2020}引入深度输入作为额外的传感信号，然而直接在隐式场上添加深度监督信号会导致退化的结果（图\ref{fig:related-work neural-rgbd comparison with NeRF}）。
 
-\subsubsection{基于RGB-D的混合隐式场景表征学习}
+NeuralRGB-D 是第一个将深度输入用于混合隐式表达优化的工作\cite{azinovic_neural_2022}，作者使用了一个较为简单的用于体积渲染的混合隐式场方案：
+\begin{equation}
+    w_i = \mathtt{sigmoid}\left(\frac{f_{TSDF}(t)}{\mathtt{trunc}}\right)\cdot\mathtt{sigmoid}\left(-\frac{f_{TSDF}(t)}{\mathtt{trunc}}\right),
+\end{equation}
+其中$\mathtt{trunc}$为截断距离，通过加入这一超参数，使得原有的隐式符号距离场变为了一个隐式截断符号距离场，在自由空间内的距离值被设为截断距离。
 
-\subsubsection{多元传感融合场景表示学习中的多视角一致性误差}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/neural-rgbd problem.png}
+    \caption{使用RGB-D多元信息优化隐式场的整体流程}
+    \label{fig:related-work neural-rgbd formulation}
+\end{figure}
 
-\subsubsection{多元传感融合场景表示学习中的渲染误差}
-
-\subsubsection{基于全方向距离场的无偏场景表示学习}
+我们将在下一小节中介绍该方法的优化过程。通过引入深度监督，NeuralRGB-D可以获得可信的场景表面，通过混合隐式表征的加入，减弱形状-辐射二义性对于场景表示学习的影响。
 
 \subsection{优化混合隐式场景表示}
+当只需要优化神经辐射场时，大部分方法仅使用光度误差（公式\ref{eq: related-work photometric loss}）即可得到较好的优化结果，然而当我们组合不同的隐式场时，原先的单目标优化过程演变成为了一个多目标的优化过程，这对损失函数的设计带来了挑战，在本节中，我们介绍优化隐式场的几种常用损失函数。
+\begin{equation}
+    \mathcal{L}_{color} = \sum_r||C(r)-\hat{C}(r)||_2^2
+    \label{eq: related-work photometric loss}
+\end{equation}
 
-\subsubsection{基于光度误差的辐射场优化}
+\subsubsection{距离场优化}
+注意到符号距离场编码了一个隐式表面，其梯度则代表了任意空间点到达其最近曲面的最速接近方向，因此NeuS\cite{wang_neus_2021}使用了Eikonal约束来限制距离场梯度向量趋近于单位方向向量：
+\begin{equation}
+    \mathcal{L}_{eikonal} = \sum_p(||\nabla f_{SDF}(p)||_2-1)^2
+\end{equation}
 
-...
+对于截断的符号距离场\cite{azinovic_neural_2022}，通常需要对场景的不同部分单独使用损失函数。在自由空间中，距离函数被截断，优化这部分距离场函数只需对网络输出的距离函数添加到截断距离$\mathtt{trunc}$的MSE损失函数：
+\begin{equation}
+    \mathcal{L}_{fs} = \sum_{p_{fs}}(f_{TSDF}(p_{fs})-\mathtt{trunc})^2
+\end{equation}
+
+而当空间点处于表面附近时（$f_{TSDF}(p) \leq \mathtt{trunc}$）则需要根据输入深度估计该点的截断距离值，并使网络输出接近预测的截断距离：
+\begin{equation}
+    \mathcal{L}_{tr} = \sum_{p_{tr}}(f_{TSDF}(p_{tr})+t_{tr}-D)^2,
+\end{equation}
+$t_{tr}$为p点的归一化射线深度。
+
+使用深度信息作为额外监督信号时，传统方案是直接使用网络预测深度与传感深度进行比较，使用MSE损失函数优化隐式表征：
+\begin{equation}
+    \mathcal{L}_{depth}=\sum_r||D(r)-\hat{D}(r)||_2^2
+\end{equation}
+
+然而由于深度传感器本身存在较大误差，直接用传感器输入值作为真实值存在一定问题，在DS-NeRF\cite{deng_depth-supervised_2022}使用KL散度使网络预测深度接近观测深度附近的一个高斯分布$\mathcal{N}(D, \hat{\sigma})$:
+\begin{equation}
+    \mathcal{L}_{DS-NeRF} = \sum\text{KL}[\mathcal{N}(D,\hat{\sigma}) | \hat{D}(r)]
+\end{equation}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/dense-depth prior.png}
+    \caption{Dense Depth Prior\cite{roessle_dense_2022}中提出使用COLMAP\cite{schonberger_structure--motion_2016}稀疏点云补全后的深度作为监督信号，并引入基于不确定性的深度监督。}
+    \label{fig:related-work dense depth prior}
+\end{figure}
+
+在Dense Depth Prior\cite{roessle_dense_2022}中，作者通过引入COLMAP\cite{schonberger_structure--motion_2016}稀疏点云，使用现成深度补全网络得到的深度图作为监督信号，这样生成的深度图相比深度传感器的噪声问题更加严峻，为了弥补真实深度精度的不足，作者引入了基于不确定性的深度损失函数：
+\begin{equation}
+    \mathcal{L}_{dense-depth}=\sum_r\left(\log(\hat{s}(r)^2)+\frac{(\hat{D}(r)-D(r))^2}{\hat{s}(r)^2}\right)
+\end{equation}
 
 \section{本章小结}
