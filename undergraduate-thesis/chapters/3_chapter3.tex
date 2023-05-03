@@ -109,6 +109,135 @@ NeRF\cite{mildenhall_nerf_2020}将一个三维场景表示为一个隐式函数�
     \label{fig:omninerf-scene-representation}
 \end{figure}
 
+对于任意输入三维点$\mathbf{x}$和观察视角$\mathbf{d}$，我们分别将三维点坐标输入多分辨率体素哈希网格$\{\mathcal{G}_l\}^L$和三平面$\mathcal{P}_{\{XY,XZ,YZ\}}$。
+
+对于多分辨率体素哈希网格，我们通过在每一分辨率级别查询输点$\mathbf{x}$的八个相邻格点，将格点序号对应哈希函数（式\ref{eq: omninerf-hash functions}）作为索引，获得每个格点对应的体素特征向量。通过三线性插值$\mathtt{interp}$在连续欧式空间下获得空间点$\mathbf{x}$处的体素特征。最后将每个分辨率层级获得的特征拼接，得到该点的输出特征向量$f_{\mathcal{G}}$。
+\begin{equation}
+    f_{\mathcal{G}} = \mathtt{concat}\{w_l(t)\cdot\mathtt{interp}(h^l(\mathbf{x}), \mathcal{G}_l)\}_{l=1}^L,
+\end{equation}
+这里$w_l$为逐层抗锯齿权重，我们将在第\ref{sec: omninerf-anti-aliasing}节描述该权重的设置。
+\begin{equation}
+    h^l(\mathbf{x}) = \left(\bigoplus_{i}x_i\pi_i^l\right) \text{mod} T,
+    \label{eq: omninerf-hash functions}
+\end{equation}
+$T, \pi^l$为随机大质数。
+
+对于三平面场景表示，我们首先将输入点$\mathbf{x}$投影到XY，XZ和YZ三个平面，接着对于每个投影坐标$\mathbf{x}_{XY},\mathbf{x}_{XZ},\mathbf{x}_{YZ}$，通过上下取整得到四个相邻格点序号，用将格点序号通过哈希函数获得的索引在哈希函数表中进行查找获得该点对应的体素特征向量，最后通过双线性插值得到分解后的三个特征向量：
+\begin{equation}
+    f_{plane} = \mathtt{interp}(h^{plane}(\mathbf{x}_{plane}), \mathcal{P}_{plane})
+    ,plane=\{XY,XZ,YZ\}
+\end{equation}
+
+通过参数融合、拼接得到完整的特征向量。该特征向量可以被后续网络结构解码成为输出物理量：
+\begin{equation}
+    f(\mathbf{x}) = \mathtt{concat}\{f_{\mathcal{G}}, f_{XY}\otimes f_{XZ} \otimes f_{YZ}\},
+\end{equation}
+这里$\otimes$为Hadamard乘积\cite{fridovich-keil_k-planes_2023}
+
+通过参数解码器和激活函数，我们可以获得该点的无符号距离函数值：
+\begin{equation}
+    |f_{SDF}(\mathbf{x})| = \mathtt{activate}(f_{SDF}(f(\mathbf{x}))),
+\end{equation}
+其中，激活函数$\mathtt{activate}(x)=|x|$，参数解码器$f_{SDF}$为一个浅层的多层感知机。
+
+接下来，网络会结合观察角度$\mathbf{d}$求得残差距离$f_\Delta(\mathbf{x}, \mathbf{d})$和辐射颜色$\mathbf{c}(\mathbf{x},\mathbf{d})$：
+\begin{align}
+    f_\Delta(\mathbf{x}, \mathbf{d})&=f_\Delta(f(\mathbf{x}), \gamma(\mathbf{d}))\\
+    \mathbf{c}(\mathbf{x},\mathbf{d}) &=f_c(f(\mathbf{x}), \gamma(\mathbf{d}))
+\end{align}
+
+基于求得的无符号距离和全方向距离残差，我们通过公式\ref{eq: omninerf-odf decomposition}获得全方向距离函数值，该函数值进而通过下式中的权重函数被转换为体渲染权重：
+\begin{equation}
+    w(\mathbf{x},\mathbf{d}) = \mathtt{sigmoid}\left(\frac{f_{ODF}(\mathbf{x},\mathbf{d})}{\mathtt{trunc}}\right)\cdot\mathtt{sigmoid}\left(-\frac{f_{ODF}(\mathbf{x},\mathbf{d})}{\mathtt{trunc}}\right)
+\end{equation}
+
+对于射线$\mathbf{r} = (\mathbf{o},\mathbf{d})$的采样点集合$\{P_i\}_{i=0}^{N-1}$，我们对每个点$\mathbf{x}_i=\mathbf{o}+t_i\mathbf{d}$获得其全方向距离值$\{f_{ODF}(\mathbf{x}_i,\mathbf{d})\}^N$和辐射颜色$\mathbf{c}(\mathbf{x}_i,\mathbf{d})$，通过体渲染公式求得渲染点颜色和深度：
+\begin{align}
+    \mathbf{C}(\mathbf{r}) &= \sum_{i=0}^{N-1}w(\mathbf{x}_i,\mathbf{d})\mathbf{c}(\mathbf{x}_i,\mathbf{d})\\
+    D(\mathbf{r}) &= \sum_{i=0}^{N-1}w(\mathbf{x}_i,\mathbf{d})\cdot t_i
+\end{align}
+
+\subsection{基于Proposal网络的采样策略}
+与大部分体渲染方法一样，我们在渲染过程中需要使用有限的采样对体渲染积分进行近似。在本课题中，我们使用基于Proposal网络的分层采样策略。即使用一个轻量级网络，从空间点坐标估计体密度$\hat{\sigma}(\mathbf{x})$：
+\begin{equation}
+    f_{Proposal}:\quad \mathbf{x}\to\hat{\sigma}(\mathbf{x})
+\end{equation}
+
+我们会首先进行从相机原点$t_n$到假想无穷远点$t_f$的归一化空间中均匀采样：
+\begin{equation}
+    s_i\sim\mathcal{U}\left[\frac{i-1}{N}, \frac{i}{N}\right],
+\end{equation}
+$s_i\in(0,1]$为点的归一化深度，本课题中，我们通过下面的方式计算归一化深度：
+\begin{align}
+    s_i&:=\frac{g(t_i)-g(t_n)}{g(t_f)-g(t_n)}\\
+    t&=g^{-1}(s\cdot g(t_f) + (1-s)\cdot g(t_n))\\
+    g(t)&:= 1/x
+\end{align}
+
+采样得到粗采样的$N_c$个点的点集$\{t_i^c\}_{i=1}^{N_c}$会被输入到$f_{Proposal}$网络中查询所对应的体积密度$\{\hat{\sigma}(t_i^c)\}^{N_c}$，通过体积渲染方法计算这些点的权重：
+\begin{equation}
+    w_i^c = \frac{T_i(1-\exp(-\hat{\sigma}(t_i^c)\delta_i^c))}{\sum_j w_j^c},
+\end{equation}
+其中$\delta_i^c = t_{i+1}^c - t_i^c$为采样区间长度。$w_i^c = \text{PDF}_i$可以看作为射线上点权重分布的概率密度函数。
+
+根据算得的概率密度函数，我们可以进行基于概率分布的重新采样，即在更高权重的地方放置更多采样点。我们首先计算累计分布值：
+\begin{equation}
+    \text{CDF}_i = \sum_{j \leq i} \text{PDF}_i
+\end{equation}
+
+通过在累计分布函数的逆函数$\text{CDF}^{-1}$上进行均匀采样，我们即可获得重新采样后的$N_f$个精采样点$\{t_i^f\}_{i=1}^{N_f}$，精采样点会被作为最终采样点输入到场景表达中进行体积渲染：
+\begin{align}
+    s^f_i &= \text{CDF}^{-1}(1/(i + 1))\\
+    t^f_i &= g^{-1}(s^f_i\cdot g(t_f) + (1-s^f_i)\cdot g(t_n)
+\end{align}
+
+Proposal网络的训练需要通过从场景表达网络中蒸馏得到，注意到粗采样和精采样的采样区间并不一定相同，因而对蒸馏训练带来了一定的困难，本课题中使用覆盖损失函数的方式优化Proposal网络\cite{barron_mip-nerf_2022}。即对所有与查询区间$<t_{j}^f, t_{j+1}^f>$有交的粗采样区间，计算所有满足条件的粗采样区间权重的和。
+\begin{equation}
+    \mathtt{bound}(\{t_i^c\}_{i=1}^{N_c}, \{w_i^c\}_{i=1}^{N_c}, <t_{j}^f, t_{j+1}^f>) :=\sum_{k:<t_{k}^c,t_{k+1}^c>\cap<t_{j}^f, t_{j+1}^f>\neq\varnothing}\hat{w}_k^f
+\end{equation}
+
+对于任意一个精采样区间$<t_{j}^f, t_{j+1}^f>$，当满足$w_j^f\leq \mathtt{bound}(\{t_i^c\}_{i=1}^{N_c}, \{w_i^c\}_{i=1}^{N_c}, <t_{j}^f, t_{j+1}^f>)$时，则Proposal网络与场景表示网络的分布相同。因此可以利用$\mathtt{bound}$函数设计损失函数：
+\begin{equation}
+    \mathcal{L}_{Proposal}=\sum_j\frac{1}{w_j^f}\max(0, w_j^f- \mathtt{bound}(\{t_i^c\}_{i=1}^{N_c}, \{w_i^c\}_{i=1}^{N_c}, <t_{j}^f, t_{j+1}^f>))^2
+\end{equation}
+
 \subsection{优化全方向距离-辐射隐式场}
+为了优化我们的全方向距离-辐射混合隐式场，我们设计了如下的损失函数：
+\begin{equation}
+    \mathcal{L} = \lambda_{color}\mathcal{L}_{color} + \lambda_{depth}\mathcal{L}_{depth}+\lambda_{ODF}\mathcal{L}_{ODF}+\lambda_{Proposal}\mathcal{L}_{Proposal},
+\end{equation}
+其中$\lambda_{\Box}$为对应损失函数项的权重。
+
+在渲染颜色、深度的损失函数设计上，我们沿用现有方法\cite{mildenhall_nerf_2020}中较为常用的光度和深度误差：
+\begin{align}
+    \mathcal{L}_{color} &= \sum_{\mathbf{r}}||\hat{C}(\mathbf{r}) - C(\mathbf{r})||_2^2\\
+    \mathcal{L}_{depth} &= \sum_{\mathbf{r}}||\hat{D}(\mathbf{r}) - D(\mathbf{r})||_2^2
+\end{align}
+
+对于全方向距离场，我们从输入深度图中估计采样点全方向距离函数值，并使用Eikonal约束\cite{gropp_implicit_2020}共同组成损失函数：
+\begin{align}
+    \mathcal{L}_{ODF} &= \sum_{\mathbf{r}}\sum_{i=1}^{N_f}||f_{ODF}(\mathbf{x}_i^f, \mathbf{d}) - \text{ODF}_i^{\mathbf{r}}||_2^2 + (||\nabla f_{ODF}(\mathbf{x}_i^f, \mathbf{d})||_2-1)^2\\
+    \text{ODF}_i^{\mathbf{r}} &= |D(\mathbf{r}) - t_i^f|
+\end{align}
+
+\section{基于网格场景表示的抗锯齿渲染}
+\label{sec: omninerf-anti-aliasing}
+在第\ref{chapter:related-work}章，我们介绍了使用集成位置编码的抗锯齿渲染方法\cite{barron_mip-nerf_2021, barron_mip-nerf_2022}，然而对于体素网格、多平面的场景表示，位置编码、集成位置编码均不再适用：由于PE/IPE的输出维度$2L+1$（$L>5$）较高，如果构造一个高维的体素网格（即空间复杂度为$\mathcal{O}(N^{2L+1}$），将会对存储开销带来极大的负荷。
+
+在本文中，我们利用传统计算机图形学中MipMap\cite{williams_pyramidal_1983}的思想，将其迁移在网格类场景表示中，通过设计一个新型采样点权重函数来解决锯齿问题。
+
+在传统图形渲染管线中，当我们使用同一张高分辨率的材质图片渲染不同远近的物体时，会出现“摩尔纹”等瑕疵现象，为了解决这一问题，通常会使用MipMap的方法，即预先计算出同一物体材质贴图的不同分辨率下的一组“金字塔”。当观察物体距离相机起点较远时，使用更小分辨率的贴图进行采样，而当观察近处物体时，为了获得更多纹理细节， 则采用更大分辨率的贴图进行采样。这样做的原因是当我们从远处观察一个物体时，单个像素所覆盖的物体区域较大，此时使用高分辨率贴图进行渲染容易采样到物体表面的高频纹理细节，使用低分辨率的贴图从统计上可以理解为在像素所覆盖区域进行了超采样。
+
+注意到多分辨率体素网格本身可以被看作场景的MipMap，为了在体素网格中模拟MipMap的效果，我们通过设计一个权重函数$w_l(t)$使距离相机较近（$t\approx t_n$）使用分辨率较高的体素网格，而使较远的采样点使用分辨率较小的网格。对于$L$级多分辨率体素网格，我们通过一组一维高斯函数建模权重函数：
+\begin{equation}
+    w_l(t) = \mathtt{activate}(\frac{1}{\sqrt{2\pi}\sigma_l}\exp(-\frac{(t-t_l)^2}{2\sigma_l^2})),
+\end{equation}
+其中$\mathtt{activate}(x) = \mathtt{sigmoid}(x)$， $t_l, \sigma_l$为第$l$级体素网格所使用高斯分布的均值和标准差：
+\begin{align}
+    t_l &:= g^{-1}(s_l\cdot g(t_f) + (1-s_l)\cdot g(t_n)\\
+    s_l &:= \frac{l + 1}{1 + L}\\
+    \sigma_l &:= t_{l+1} - t_{l}
+\end{align}
+
 
 \section{本章小结}

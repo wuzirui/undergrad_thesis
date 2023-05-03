@@ -1,4 +1,290 @@
 
+@inproceedings{williams_pyramidal_1983,
+	address = {New York, NY, USA},
+	series = {{SIGGRAPH} '83},
+	title = {Pyramidal parametrics},
+	isbn = {978-0-89791-109-2},
+	url = {https://dl.acm.org/doi/10.1145/800059.801126},
+	doi = {10.1145/800059.801126},
+	abstract = {The mapping of images onto surfaces may substantially increase the realism and information content of computer-generated imagery. The projection of a flat source image onto a curved surface may involve sampling difficulties, however, which are compounded as the view of the surface changes. As the projected scale of the surface increases, interpolation between the original samples of the source image is necessary; as the scale is reduced, approximation of multiple samples in the source is required. Thus a constantly changing sampling window of view-dependent shape must traverse the source image. To reduce the computation implied by these requirements, a set of prefiltered source images may be created. This approach can be applied to particular advantage in animation, where a large number of frames using the same source image must be generated. This paper advances a “pyramidal parametric” prefiltering and sampling geometry which minimizes aliasing effects and assures continuity within and between target images. Although the mapping of texture onto surfaces is an excellent example of the process and provided the original motivation for its development, pyramidal parametric data structures admit of wider application. The aliasing of not only surface texture, but also highlights and even the surface representations themselves, may be minimized by pyramidal parametric means.},
+	urldate = {2023-05-03},
+	booktitle = {Proceedings of the 10th annual conference on {Computer} graphics and interactive techniques},
+	publisher = {Association for Computing Machinery},
+	author = {Williams, Lance},
+	year = {1983},
+	keywords = {/unread, Antialiasing, Illumination models, Modeling, Pyramidal data structures, Reflectance mapping, Texture mapping, Visible surface algorithms},
+	pages = {1--11},
+}
+
+@article{bernhard_3d_2023,
+	title = {{3D} {Gaussian} {Splatting} for {Real}-{Time} {Radiance} {Field} {Rendering}},
+	journal = {ACM Transactions on Graphics},
+	author = {Bernhard, Kerbl and Georgios, Kopanas and Thomas, Leimkühler and George, Drettakis},
+	month = may,
+	year = {2023},
+	note = {titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:},
+	keywords = {/unread},
+}
+
+@misc{prokudin_dynamic_2023,
+	title = {Dynamic {Point} {Fields}},
+	url = {http://arxiv.org/abs/2304.02626},
+	abstract = {Recent years have witnessed significant progress in the field of neural surface reconstruction. While the extensive focus was put on volumetric and implicit approaches, a number of works have shown that explicit graphics primitives such as point clouds can significantly reduce computational complexity, without sacrificing the reconstructed surface quality. However, less emphasis has been put on modeling dynamic surfaces with point primitives. In this work, we present a dynamic point field model that combines the representational benefits of explicit point-based graphics with implicit deformation networks to allow efficient modeling of non-rigid 3D surfaces. Using explicit surface primitives also allows us to easily incorporate well-established constraints such as-isometric-as-possible regularisation. While learning this deformation model is prone to local optima when trained in a fully unsupervised manner, we propose to additionally leverage semantic information such as keypoint dynamics to guide the deformation learning. We demonstrate our model with an example application of creating an expressive animatable human avatar from a collection of 3D scans. Here, previous methods mostly rely on variants of the linear blend skinning paradigm, which fundamentally limits the expressivity of such models when dealing with complex cloth appearances such as long skirts. We show the advantages of our dynamic point field framework in terms of its representational power, learning efficiency, and robustness to out-of-distribution novel poses.},
+	urldate = {2023-05-03},
+	publisher = {arXiv},
+	author = {Prokudin, Sergey and Ma, Qianli and Raafat, Maxime and Valentin, Julien and Tang, Siyu},
+	month = apr,
+	year = {2023},
+	note = {arXiv:2304.02626 [cs]},
+	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition},
+}
+
+@misc{zheng_pointavatar_2023,
+	title = {{PointAvatar}: {Deformable} {Point}-based {Head} {Avatars} from {Videos}},
+	shorttitle = {{PointAvatar}},
+	url = {http://arxiv.org/abs/2212.08377},
+	doi = {10.48550/arXiv.2212.08377},
+	abstract = {The ability to create realistic, animatable and relightable head avatars from casual video sequences would open up wide ranging applications in communication and entertainment. Current methods either build on explicit 3D morphable meshes (3DMM) or exploit neural implicit representations. The former are limited by fixed topology, while the latter are non-trivial to deform and inefficient to render. Furthermore, existing approaches entangle lighting in the color estimation, thus they are limited in re-rendering the avatar in new environments. In contrast, we propose PointAvatar, a deformable point-based representation that disentangles the source color into intrinsic albedo and normal-dependent shading. We demonstrate that PointAvatar bridges the gap between existing mesh- and implicit representations, combining high-quality geometry and appearance with topological flexibility, ease of deformation and rendering efficiency. We show that our method is able to generate animatable 3D avatars using monocular videos from multiple sources including hand-held smartphones, laptop webcams and internet videos, achieving state-of-the-art quality in challenging cases where previous methods fail, e.g., thin hair strands, while being significantly more efficient in training than competing methods.},
+	urldate = {2023-05-03},
+	publisher = {arXiv},
+	author = {Zheng, Yufeng and Yifan, Wang and Wetzstein, Gordon and Black, Michael J. and Hilliges, Otmar},
+	month = feb,
+	year = {2023},
+	note = {arXiv:2212.08377 [cs]},
+	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition, Computer Science - Graphics},
+}
+
+@inproceedings{hongwen_closet_nodate,
+	title = {{CloSET}: {Modeling} {Clothed} {Humans} on {Continuous} {Surface} with {Explicit} {Template} {Decomposition}},
+	abstract = {Creating animatable avatars from static scans requires the modeling of clothing deformations in different poses. Existing learning-based methods typically add pose-dependent deformations upon a minimally-clothed mesh template or a learned implicit template, which have limitations in capturing details or hinder end-to-end learning. In this paper, we revisit point-based solutions and propose to decompose explicit garment-related templates and then add pose-dependent wrinkles to them. In this way, the clothing deformations are disentangled such that the pose-dependent wrinkles can be better learned and applied to unseen poses. Additionally, to tackle the seam artifact issues in recent state-of-the-art point-based methods, we propose to learn point features on a body surface, which establishes a continuous and compact feature space to capture the fine-grained and pose-dependent clothing geometry. To facilitate the research in this field, we also introduce a high-quality scan dataset of humans in real-world clothing. Our approach is validated on two existing datasets and our newly introduced dataset, showing better clothing deformation results in unseen poses.},
+	booktitle = {2023 {IEEE}/{CVF} {Conference} on {Computer} {Vision} and {Pattern} {Recognition} ({CVPR})},
+	author = {Hongwen, Zhang and Siyou, Lin and Ruizhi, Shao and Yuxiang, Zhang and Zerong, Zheng and Han, Huang and Yandong, Guo and Yebin, Liu},
+	note = {titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:
+titleTranslation:},
+	keywords = {/unread},
+}
+
+@article{xie_neural_2022,
+	title = {Neural {Fields} in {Visual} {Computing} and {Beyond}},
+	volume = {41},
+	issn = {0167-7055, 1467-8659},
+	url = {https://onlinelibrary.wiley.com/doi/10.1111/cgf.14505},
+	doi = {10.1111/cgf.14505},
+	language = {en},
+	number = {2},
+	urldate = {2023-05-02},
+	journal = {Computer Graphics Forum},
+	author = {Xie, Yiheng and Takikawa, Towaki and Saito, Shunsuke and Litany, Or and Yan, Shiqin and Khan, Numair and Tombari, Federico and Tompkin, James and Sitzmann, Vincent and Sridhar, Srinath},
+	month = may,
+	year = {2022},
+	keywords = {/unread},
+	pages = {641--676},
+}
+
+@misc{gao_object-centric_2023,
+	title = {Object-{Centric} {Voxelization} of {Dynamic} {Scenes} via {Inverse} {Neural} {Rendering}},
+	url = {http://arxiv.org/abs/2305.00393},
+	doi = {10.48550/arXiv.2305.00393},
+	abstract = {Understanding the compositional dynamics of the world in unsupervised 3D scenarios is challenging. Existing approaches either fail to make effective use of time cues or ignore the multi-view consistency of scene decomposition. In this paper, we propose DynaVol, an inverse neural rendering framework that provides a pilot study for learning time-varying volumetric representations for dynamic scenes with multiple entities (like objects). It has two main contributions. First, it maintains a time-dependent 3D grid, which dynamically and flexibly binds the spatial locations to different entities, thus encouraging the separation of information at a representational level. Second, our approach jointly learns grid-level local dynamics, object-level global dynamics, and the compositional neural radiance fields in an end-to-end architecture, thereby enhancing the spatiotemporal consistency of object-centric scene voxelization. We present a two-stage training scheme for DynaVol and validate its effectiveness on various benchmarks with multiple objects, diverse dynamics, and real-world shapes and textures. We present visualization at https://sites.google.com/view/dynavol-visual.},
+	urldate = {2023-05-02},
+	publisher = {arXiv},
+	author = {Gao, Siyu and Zhao, Yanpeng and Wang, Yunbo and Yang, Xiaokang},
+	month = apr,
+	year = {2023},
+	note = {arXiv:2305.00393 [cs]},
+	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition, Computer Science - Machine Learning},
+}
+
+@misc{wallingford_neural_2023,
+	title = {Neural {Radiance} {Field} {Codebooks}},
+	url = {http://arxiv.org/abs/2301.04101},
+	doi = {10.48550/arXiv.2301.04101},
+	abstract = {Compositional representations of the world are a promising step towards enabling high-level scene understanding and efficient transfer to downstream tasks. Learning such representations for complex scenes and tasks remains an open challenge. Towards this goal, we introduce Neural Radiance Field Codebooks (NRC), a scalable method for learning object-centric representations through novel view reconstruction. NRC learns to reconstruct scenes from novel views using a dictionary of object codes which are decoded through a volumetric renderer. This enables the discovery of reoccurring visual and geometric patterns across scenes which are transferable to downstream tasks. We show that NRC representations transfer well to object navigation in THOR, outperforming 2D and 3D representation learning methods by 3.1\% success rate. We demonstrate that our approach is able to perform unsupervised segmentation for more complex synthetic (THOR) and real scenes (NYU Depth) better than prior methods (29\% relative improvement). Finally, we show that NRC improves on the task of depth ordering by 5.5\% accuracy in THOR.},
+	urldate = {2023-05-02},
+	publisher = {arXiv},
+	author = {Wallingford, Matthew and Kusupati, Aditya and Fang, Alex and Ramanujan, Vivek and Kembhavi, Aniruddha and Mottaghi, Roozbeh and Farhadi, Ali},
+	month = apr,
+	year = {2023},
+	note = {arXiv:2301.04101 [cs]},
+	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition, Computer Science - Machine Learning},
+}
+
+@misc{debbagh_neural_2023,
+	title = {Neural {Radiance} {Fields} ({NeRFs}): {A} {Review} and {Some} {Recent} {Developments}},
+	shorttitle = {Neural {Radiance} {Fields} ({NeRFs})},
+	url = {http://arxiv.org/abs/2305.00375},
+	abstract = {Neural Radiance Field (NeRF) is a framework that represents a 3D scene in the weights of a fully connected neural network, known as the Multi-Layer Perception(MLP). The method was introduced for the task of novel view synthesis and is able to achieve state-of-the-art photorealistic image renderings from a given continuous viewpoint. NeRFs have become a popular field of research as recent developments have been made that expand the performance and capabilities of the base framework. Recent developments include methods that require less images to train the model for view synthesis as well as methods that are able to generate views from unconstrained and dynamic scene representations.},
+	urldate = {2023-05-02},
+	publisher = {arXiv},
+	author = {Debbagh, Mohamed},
+	month = apr,
+	year = {2023},
+	note = {arXiv:2305.00375 [cs, eess]},
+	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition, Electrical Engineering and Systems Science - Image and Video Processing},
+}
+
+@misc{deng_nerf-loam_2023,
+	title = {{NeRF}-{LOAM}: {Neural} {Implicit} {Representation} for {Large}-{Scale} {Incremental} {LiDAR} {Odometry} and {Mapping}},
+	shorttitle = {{NeRF}-{LOAM}},
+	url = {http://arxiv.org/abs/2303.10709},
+	doi = {10.48550/arXiv.2303.10709},
+	abstract = {Simultaneously odometry and mapping using LiDAR data is an important task for mobile systems to achieve full autonomy in large-scale environments. However, most existing LiDAR-based methods prioritize tracking quality over reconstruction quality. Although the recently developed neural radiance fields (NeRF) have shown promising advances in implicit reconstruction for indoor environments, the problem of simultaneous odometry and mapping for large-scale scenarios using incremental LiDAR data remains unexplored. To bridge this gap, in this paper, we propose a novel NeRF-based LiDAR odometry and mapping approach, NeRF-LOAM, consisting of three modules neural odometry, neural mapping, and mesh reconstruction. All these modules utilize our proposed neural signed distance function, which separates LiDAR points into ground and non-ground points to reduce Z-axis drift, optimizes odometry and voxel embeddings concurrently, and in the end generates dense smooth mesh maps of the environment. Moreover, this joint optimization allows our NeRF-LOAM to be pre-trained free and exhibit strong generalization abilities when applied to different environments. Extensive evaluations on three publicly available datasets demonstrate that our approach achieves state-of-the-art odometry and mapping performance, as well as a strong generalization in large-scale environments utilizing LiDAR data. Furthermore, we perform multiple ablation studies to validate the effectiveness of our network design. The implementation of our approach will be made available at https://github.com/JunyuanDeng/NeRF-LOAM.},
+	urldate = {2023-05-02},
+	publisher = {arXiv},
+	author = {Deng, Junyuan and Chen, Xieyuanli and Xia, Songpengcheng and Sun, Zhen and Liu, Guoqing and Yu, Wenxian and Pei, Ling},
+	month = mar,
+	year = {2023},
+	note = {arXiv:2303.10709 [cs]},
+	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition},
+}
+
+@article{tavanaei_deep_2019,
+	title = {Deep {Learning} in {Spiking} {Neural} {Networks}},
+	volume = {111},
+	issn = {08936080},
+	url = {http://arxiv.org/abs/1804.08150},
+	doi = {10.1016/j.neunet.2018.12.002},
+	abstract = {In recent years, deep learning has been a revolution in the field of machine learning, for computer vision in particular. In this approach, a deep (multilayer) artificial neural network (ANN) is trained in a supervised manner using backpropagation. Huge amounts of labeled examples are required, but the resulting classification accuracy is truly impressive, sometimes outperforming humans. Neurons in an ANN are characterized by a single, static, continuous-valued activation. Yet biological neurons use discrete spikes to compute and transmit information, and the spike times, in addition to the spike rates, matter. Spiking neural networks (SNNs) are thus more biologically realistic than ANNs, and arguably the only viable option if one wants to understand how the brain computes. SNNs are also more hardware friendly and energy-efficient than ANNs, and are thus appealing for technology, especially for portable devices. However, training deep SNNs remains a challenge. Spiking neurons' transfer function is usually non-differentiable, which prevents using backpropagation. Here we review recent supervised and unsupervised methods to train deep SNNs, and compare them in terms of accuracy, but also computational cost and hardware friendliness. The emerging picture is that SNNs still lag behind ANNs in terms of accuracy, but the gap is decreasing, and can even vanish on some tasks, while the SNNs typically require much fewer operations.},
+	urldate = {2023-05-02},
+	journal = {Neural Networks},
+	author = {Tavanaei, Amirhossein and Ghodrati, Masoud and Kheradpisheh, Saeed Reza and Masquelier, Timothee and Maida, Anthony S.},
+	month = mar,
+	year = {2019},
+	note = {arXiv:1804.08150 [cs]},
+	keywords = {/unread, Computer Science - Artificial Intelligence, Computer Science - Neural and Evolutionary Computing},
+	pages = {47--63},
+}
+
+@inproceedings{zhan_general_2023,
+	title = {General {Neural} {Gauge} {Fields}},
+	url = {https://openreview.net/forum?id=XWkWK2UagFR},
+	abstract = {The recent advance of neural fields, such as neural radiance fields, has significantly pushed the boundary of scene representation learning. Aiming to boost the computation efﬁciency and rendering quality of 3D scenes, a popular line of research maps the 3D coordinate system to another measuring system, e.g., 2D manifolds and hash tables, for modeling neural fields. The conversion of coordinate systems can be typically dubbed as {\textbackslash}emph\{gauge transformation\}, which is usually a pre-defined mapping function, e.g., orthogonal projection or spatial hash function. This begs a question: can we directly learn a desired gauge transformation along with the neural field in an end-to-end manner? In this work, we extend this problem to a general paradigm with a taxonomy of discrete and continuous cases, and develop an end-to-end learning framework to jointly optimize the gauge transformation and neural fields. To counter the problem that the learning of gauge transformations can collapse easily, we derive a general regularization mechanism from the principle of information conservation during the gauge transformation. To circumvent the high computation cost in gauge learning with regularization, we directly derive an information-invariant gauge transformation which allows to preserve scene information inherently and yield superior performance.},
+	language = {en},
+	urldate = {2023-05-02},
+	author = {Zhan, Fangneng and Liu, Lingjie and Kortylewski, Adam and Theobalt, Christian},
+	month = feb,
+	year = {2023},
+	keywords = {/unread},
+}
+
+@article{dadon_ddnerf_2022,
+	title = {{DDNeRF}: {Depth} {Distribution} {Neural} {Radiance} {Fields}},
+	shorttitle = {{DDNeRF}},
+	url = {https://arxiv.org/abs/2203.16626v1},
+	doi = {10.48550/arXiv.2203.16626},
+	abstract = {In recent years, the field of implicit neural representation has progressed significantly. Models such as neural radiance fields (NeRF), which uses relatively small neural networks, can represent high-quality scenes and achieve state-of-the-art results for novel view synthesis. Training these types of networks, however, is still computationally very expensive. We present depth distribution neural radiance field (DDNeRF), a new method that significantly increases sampling efficiency along rays during training while achieving superior results for a given sampling budget. DDNeRF achieves this by learning a more accurate representation of the density distribution along rays. More specifically, we train a coarse model to predict the internal distribution of the transparency of an input volume in addition to the volume's total density. This finer distribution then guides the sampling procedure of the fine model. This method allows us to use fewer samples during training while reducing computational resources.},
+	language = {en},
+	urldate = {2023-01-19},
+	author = {Dadon, David and Fried, Ohad and Hel-Or, Yacov},
+	month = mar,
+	year = {2022},
+	keywords = {/unread},
+}
+
+@misc{chang_pointersect_2023,
+	title = {Pointersect: {Neural} {Rendering} with {Cloud}-{Ray} {Intersection}},
+	shorttitle = {Pointersect},
+	url = {http://arxiv.org/abs/2304.12390},
+	doi = {10.48550/arXiv.2304.12390},
+	abstract = {We propose a novel method that renders point clouds as if they are surfaces. The proposed method is differentiable and requires no scene-specific optimization. This unique capability enables, out-of-the-box, surface normal estimation, rendering room-scale point clouds, inverse rendering, and ray tracing with global illumination. Unlike existing work that focuses on converting point clouds to other representations--e.g., surfaces or implicit functions--our key idea is to directly infer the intersection of a light ray with the underlying surface represented by the given point cloud. Specifically, we train a set transformer that, given a small number of local neighbor points along a light ray, provides the intersection point, the surface normal, and the material blending weights, which are used to render the outcome of this light ray. Localizing the problem into small neighborhoods enables us to train a model with only 48 meshes and apply it to unseen point clouds. Our model achieves higher estimation accuracy than state-of-the-art surface reconstruction and point-cloud rendering methods on three test sets. When applied to room-scale point clouds, without any scene-specific optimization, the model achieves competitive quality with the state-of-the-art novel-view rendering methods. Moreover, we demonstrate ability to render and manipulate Lidar-scanned point clouds such as lighting control and object insertion.},
+	urldate = {2023-05-01},
+	publisher = {arXiv},
+	author = {Chang, Jen-Hao Rick and Chen, Wei-Yu and Ranjan, Anurag and Yi, Kwang Moo and Tuzel, Oncel},
+	month = apr,
+	year = {2023},
+	note = {arXiv:2304.12390 [cs]},
+	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition, Computer Science - Graphics},
+}
+
+@misc{yang_learning_2023,
+	title = {Learning a {Diffusion} {Prior} for {NeRFs}},
+	url = {http://arxiv.org/abs/2304.14473},
+	doi = {10.48550/arXiv.2304.14473},
+	abstract = {Neural Radiance Fields (NeRFs) have emerged as a powerful neural 3D representation for objects and scenes derived from 2D data. Generating NeRFs, however, remains difficult in many scenarios. For instance, training a NeRF with only a small number of views as supervision remains challenging since it is an under-constrained problem. In such settings, it calls for some inductive prior to filter out bad local minima. One way to introduce such inductive priors is to learn a generative model for NeRFs modeling a certain class of scenes. In this paper, we propose to use a diffusion model to generate NeRFs encoded on a regularized grid. We show that our model can sample realistic NeRFs, while at the same time allowing conditional generations, given a certain observation as guidance.},
+	urldate = {2023-05-01},
+	publisher = {arXiv},
+	author = {Yang, Guandao and Kundu, Abhijit and Guibas, Leonidas J. and Barron, Jonathan T. and Poole, Ben},
+	month = apr,
+	year = {2023},
+	note = {arXiv:2304.14473 [cs]},
+	keywords = {/unread, Computer Science - Artificial Intelligence, Computer Science - Computer Vision and Pattern Recognition, Computer Science - Machine Learning},
+}
+
+@inproceedings{hertz_sape_2021,
+	title = {{SAPE}: {Spatially}-{Adaptive} {Progressive} {Encoding} for {Neural} {Optimization}},
+	shorttitle = {{SAPE}},
+	url = {https://openreview.net/forum?id=0wqGMmfqBw},
+	abstract = {Multilayer-perceptrons (MLP) are known to struggle learning functions of high-frequencies, and in particular, instances of wide frequency bands. We present a progressive mapping scheme for input signals of MLP networks, enabling them to better fit a wide range of frequencies without sacrificing training stability or requiring any domain specific preprocessing. We introduce Spatially Adaptive Progressive Encoding (SAPE) layers, which gradually unmask signal components with increasing frequencies as a function of time and space. The progressive exposure of frequencies is monitored by a feedback loop throughout the neural optimization process, allowing changes to propagate at different rates among local spatial portions of the signal space. We demonstrate the advantage of our method on variety of domains and applications: regression of low dimensional signals and images, representation learning of occupancy networks, and a geometric task of mesh transfer between 3D shapes.},
+	language = {en},
+	urldate = {2023-05-01},
+	author = {Hertz, Amir and Perel, Or and Giryes, Raja and Sorkine-hornung, Olga and Cohen-or, Daniel},
+	month = oct,
+	year = {2021},
+	keywords = {/unread},
+}
+
+@misc{deng_nasa_2022,
+	title = {{NASA}: {Neural} {Articulated} {Shape} {Approximation}},
+	shorttitle = {{NASA}},
+	url = {http://arxiv.org/abs/1912.03207},
+	doi = {10.48550/arXiv.1912.03207},
+	abstract = {Efficient representation of articulated objects such as human bodies is an important problem in computer vision and graphics. To efficiently simulate deformation, existing approaches represent 3D objects using polygonal meshes and deform them using skinning techniques. This paper introduces neural articulated shape approximation (NASA), an alternative framework that enables efficient representation of articulated deformable objects using neural indicator functions that are conditioned on pose. Occupancy testing using NASA is straightforward, circumventing the complexity of meshes and the issue of water-tightness. We demonstrate the effectiveness of NASA for 3D tracking applications, and discuss other potential extensions.},
+	urldate = {2023-05-01},
+	publisher = {arXiv},
+	author = {Deng, Boyang and Lewis, J. P. and Jeruzalski, Timothy and Pons-Moll, Gerard and Hinton, Geoffrey and Norouzi, Mohammad and Tagliasacchi, Andrea},
+	month = jul,
+	year = {2022},
+	note = {arXiv:1912.03207 [cs]},
+	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition, Computer Science - Graphics, Computer Science - Machine Learning},
+}
+
+@misc{weng_humannerf_2022,
+	title = {{HumanNeRF}: {Free}-viewpoint {Rendering} of {Moving} {People} from {Monocular} {Video}},
+	shorttitle = {{HumanNeRF}},
+	url = {http://arxiv.org/abs/2201.04127},
+	doi = {10.48550/arXiv.2201.04127},
+	abstract = {We introduce a free-viewpoint rendering method -- HumanNeRF -- that works on a given monocular video of a human performing complex body motions, e.g. a video from YouTube. Our method enables pausing the video at any frame and rendering the subject from arbitrary new camera viewpoints or even a full 360-degree camera path for that particular frame and body pose. This task is particularly challenging, as it requires synthesizing photorealistic details of the body, as seen from various camera angles that may not exist in the input video, as well as synthesizing fine details such as cloth folds and facial appearance. Our method optimizes for a volumetric representation of the person in a canonical T-pose, in concert with a motion field that maps the estimated canonical representation to every frame of the video via backward warps. The motion field is decomposed into skeletal rigid and non-rigid motions, produced by deep networks. We show significant performance improvements over prior work, and compelling examples of free-viewpoint renderings from monocular video of moving humans in challenging uncontrolled capture scenarios.},
+	urldate = {2023-05-01},
+	publisher = {arXiv},
+	author = {Weng, Chung-Yi and Curless, Brian and Srinivasan, Pratul P. and Barron, Jonathan T. and Kemelmacher-Shlizerman, Ira},
+	month = jun,
+	year = {2022},
+	note = {arXiv:2201.04127 [cs]},
+	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition, Computer Science - Graphics},
+}
+
+@misc{zhao_humannerf_2022,
+	title = {{HumanNeRF}: {Efficiently} {Generated} {Human} {Radiance} {Field} from {Sparse} {Inputs}},
+	shorttitle = {{HumanNeRF}},
+	url = {http://arxiv.org/abs/2112.02789},
+	doi = {10.48550/arXiv.2112.02789},
+	abstract = {Recent neural human representations can produce high-quality multi-view rendering but require using dense multi-view inputs and costly training. They are hence largely limited to static models as training each frame is infeasible. We present HumanNeRF - a generalizable neural representation - for high-fidelity free-view synthesis of dynamic humans. Analogous to how IBRNet assists NeRF by avoiding per-scene training, HumanNeRF employs an aggregated pixel-alignment feature across multi-view inputs along with a pose embedded non-rigid deformation field for tackling dynamic motions. The raw HumanNeRF can already produce reasonable rendering on sparse video inputs of unseen subjects and camera settings. To further improve the rendering quality, we augment our solution with an appearance blending module for combining the benefits of both neural volumetric rendering and neural texture blending. Extensive experiments on various multi-view dynamic human datasets demonstrate the generalizability and effectiveness of our approach in synthesizing photo-realistic free-view humans under challenging motions and with very sparse camera view inputs.},
+	urldate = {2023-05-01},
+	publisher = {arXiv},
+	author = {Zhao, Fuqiang and Yang, Wei and Zhang, Jiakai and Lin, Pei and Zhang, Yingliang and Yu, Jingyi and Xu, Lan},
+	month = mar,
+	year = {2022},
+	note = {arXiv:2112.02789 [cs]},
+	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition, Computer Science - Graphics},
+}
+
 @misc{niemeyer_differentiable_2020,
 	title = {Differentiable {Volumetric} {Rendering}: {Learning} {Implicit} {3D} {Representations} without {3D} {Supervision}},
 	shorttitle = {Differentiable {Volumetric} {Rendering}},
@@ -1164,7 +1450,7 @@ titleTranslation:},
 	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition},
 }
 
-@misc{chen_dehazenerf_2023-1,
+@misc{chen_dehazenerf_2023,
 	title = {{DehazeNeRF}: {Multiple} {Image} {Haze} {Removal} and {3D} {Shape} {Reconstruction} using {Neural} {Radiance} {Fields}},
 	shorttitle = {{DehazeNeRF}},
 	url = {http://arxiv.org/abs/2303.11364},
@@ -1312,7 +1598,7 @@ titleTranslation:},
 	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition},
 }
 
-@misc{jin_reliable_2023-1,
+@misc{jin_reliable_2023,
 	title = {Reliable {Image} {Dehazing} by {NeRF}},
 	url = {http://arxiv.org/abs/2303.09153},
 	doi = {10.48550/arXiv.2303.09153},
@@ -1496,7 +1782,7 @@ titleTranslation:},
 	pages = {12871--12881},
 }
 
-@book{__nodate,
+@book{__nodate-1,
 	title = {数学要素},
 	url = {https://github.com/Visualize-ML/Book3_Elements-of-Mathematics},
 	author = {生姜, DrGinger},
@@ -3297,20 +3583,6 @@ version: 3},
 	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition},
 }
 
-@article{dadon_ddnerf_2022,
-	title = {{DDNeRF}: {Depth} {Distribution} {Neural} {Radiance} {Fields}},
-	shorttitle = {{DDNeRF}},
-	url = {https://arxiv.org/abs/2203.16626v1},
-	doi = {10.48550/arXiv.2203.16626},
-	abstract = {In recent years, the field of implicit neural representation has progressed significantly. Models such as neural radiance fields (NeRF), which uses relatively small neural networks, can represent high-quality scenes and achieve state-of-the-art results for novel view synthesis. Training these types of networks, however, is still computationally very expensive. We present depth distribution neural radiance field (DDNeRF), a new method that significantly increases sampling efficiency along rays during training while achieving superior results for a given sampling budget. DDNeRF achieves this by learning a more accurate representation of the density distribution along rays. More specifically, we train a coarse model to predict the internal distribution of the transparency of an input volume in addition to the volume's total density. This finer distribution then guides the sampling procedure of the fine model. This method allows us to use fewer samples during training while reducing computational resources.},
-	language = {en},
-	urldate = {2023-01-19},
-	author = {Dadon, David and Fried, Ohad and Hel-Or, Yacov},
-	month = mar,
-	year = {2022},
-	keywords = {/unread},
-}
-
 @misc{tian_mononerf_2022,
 	title = {{MonoNeRF}: {Learning} a {Generalizable} {Dynamic} {Radiance} {Field} from {Monocular} {Videos}},
 	shorttitle = {{MonoNeRF}},
@@ -3921,18 +4193,6 @@ version: 2},
 	year = {2022},
 	note = {arXiv:2206.05837 [cs]},
 	keywords = {Computer Science - Computer Vision and Pattern Recognition, Distance Fields, Read Later},
-}
-
-@inproceedings{anonymous_neural_2022,
-	title = {Neural {Radiance} {Field} {Codebooks}},
-	url = {https://openreview.net/forum?id=mX56bKDybu5},
-	abstract = {Learning geometrically-aware, object-centric representations through elastic bottlenecks and a differentiable renderer for downstream tasks.},
-	language = {en},
-	urldate = {2022-10-07},
-	author = {Anonymous},
-	month = sep,
-	year = {2022},
-	keywords = {NeRF, Read Later},
 }
 
 @misc{jiang_neuman_2022,
