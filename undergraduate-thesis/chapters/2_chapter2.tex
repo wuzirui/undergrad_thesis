@@ -1,4 +1,5 @@
 \chapter{文献综述}
+\label{chapter:related-work}
 在本章中，我们将对国内外现有相关研究工作现状进行阐述。在\ref{sec: related-work implicit scene representation learning}节中，我们将介绍以神经辐射场\cite{mildenhall_nerf_2020}为代表的使用隐式函数进行场景表示学习的主流方法。纵观神经隐式场发展的历程，人们用来学习场景外观的地图表示方法经历了从纯隐式的多层感知机地图到半隐式的体素地图、低维张量地图的变革，在该节中我们将详细介绍这一变换的过程和内在原因。在\ref{sec: related-work realistic rendering}一节中，我们将介绍人们基于神经辐射场上为了使渲染更具真实感所提出的一系列方法，包括引入无界场景压缩、前后景分割等。在\ref{sec: related-work density-distance fields}一节中，我们将介绍辐射-距离混合场景表示的方法。在该节中，我们将首先分析单纯使用辐射场同时表示场景几何和外观所带来的二义性问题，接着从采样策略、体渲染方法、多元传感信息融合以及模型优化几个角度分别介绍相关工作所使用的方法。
 
 \section{神经隐式场景表示学习}
@@ -485,7 +486,10 @@ NeuralRGB-D 是第一个将深度输入用于混合隐式表达优化的工作\c
     \label{fig:related-work neural-rgbd formulation}
 \end{figure}
 
-我们将在下一小节中介绍该方法的优化过程。通过引入深度监督，NeuralRGB-D可以获得可信的场景表面，通过混合隐式表征的加入，减弱形状-辐射二义性对于场景表示学习的影响。
+我们将在第\ref{sec: related-work SDF optimization}节中介绍该方法的优化过程。通过引入深度监督，NeuralRGB-D可以获得可信的场景表面，通过混合隐式表征的加入，减弱形状-辐射二义性对于场景表示学习的影响。
+
+\subsection{真实世界的RGB-D对齐问题}
+
 
 \subsection{优化混合隐式场景表示}
 当只需要优化神经辐射场时，大部分方法仅使用光度误差（公式\ref{eq: related-work photometric loss}）即可得到较好的优化结果，然而当我们组合不同的隐式场时，原先的单目标优化过程演变成为了一个多目标的优化过程，这对损失函数的设计带来了挑战，在本节中，我们介绍优化隐式场的几种常用损失函数。
@@ -495,6 +499,7 @@ NeuralRGB-D 是第一个将深度输入用于混合隐式表达优化的工作\c
 \end{equation}
 
 \subsubsection{距离场优化}
+\label{sec: related-work SDF optimization}
 注意到符号距离场编码了一个隐式表面，其梯度则代表了任意空间点到达其最近曲面的最速接近方向，因此NeuS\cite{wang_neus_2021}使用了Eikonal约束来限制距离场梯度向量趋近于单位方向向量：
 \begin{equation}
     \mathcal{L}_{eikonal} = \sum_p(||\nabla f_{SDF}(p)||_2-1)^2
@@ -532,5 +537,16 @@ $t_{tr}$为p点的归一化射线深度。
 \begin{equation}
     \mathcal{L}_{dense-depth}=\sum_r\left(\log(\hat{s}(r)^2)+\frac{(\hat{D}(r)-D(r))^2}{\hat{s}(r)^2}\right)
 \end{equation}
+
+\subsection{小结}
+
+\newpage
+\section{动态场景隐式重建}
+
+\subsection{基于变形隐式场的动态场景重建}
+
+\subsection{基于多分支隐式表达的动态场景分解}
+
+\subsection{基于场景图的动态场景重建}
 
 \section{本章小结}
