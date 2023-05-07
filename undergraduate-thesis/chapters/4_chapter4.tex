@@ -148,14 +148,182 @@ Block-NeRF\cite{tancik_block-nerf_2022}和 Mega-NeRF\cite{turki_mega-nerf_2022} 
 通过分析辐射场内自然学习到的密度分布，我们首先深入探讨了漂浮物如何影响体积渲染过程的问题。从几何学上讲，漂浮物会导致地表前方的密度非零，因此渲染的深度图像会出现偏差，而从光度方面来看，由于传输依赖于深度，在不同距离观察朦胧场景可能会导致不同的结果即使场景辐射场与视图无关，视点之间的退化行为同样如此。这种有偏见的深度推理和模棱两可的视图依赖性导致辐射场的学习难以处理。为了解决这些问题，我们提出了一种改进的深度图细化平均权重。就视图依赖性歧义而言，我们引入了一个基于协方差的正则化项，以减小辐射和雾霾引起的辐照度衰减之间的强耦合。这些方式保证了无雾场景表示的准确恢复以及漂浮物的浓度控制。
 
 \subsection{相关工作概要}
-\textbf{图像去雾：}
-现有去雾方法大致可以分为三类：基于先验的方法、基于学习的方法和散射介质中的 3D 重建：
+现有图像去雾方法大致可以分为三类：基于先验的方法、基于学习的方法和散射介质中的三维重建。
 \begin{enumerate}
     \item \textbf{基于先验信息的去雾方法}。基于先验的方法依赖于物理散射模型，通过使用启发式先验来估计和去除雾霾，这些先验包括对比度最大化先验、暗通道先验、颜色衰减先验、强度框先验和非局部先验 \cite{kaiming_he_single_2009, nishino_bayesian_2012, fattal_dehazing_2015, wu_contrastive_2021}。虽然这些方法产生了视觉上逼真的结果，但所采用的先验仅限于特定场景。例如，当图像中没有天空区域时，之前的暗通道方法表现不佳\cite{kaiming_he_single_2009}，因为它依赖于该区域的 RGB 值来估计大气光。此外，由于先验是在图像域中指定的，因此可能无法完全保证多视图一致性。
+    \item \textbf{基于学习的去雾方法}。这种类型的早期工作\cite{cai_dehazenet_2016, fujimura_dehazing_2021, dong_multi-scale_2020, li_aod-net_2017, liu_griddehazenet_2019, qin_ffa-net_2020, qu_enhanced_2019, ren_gated_2018, ren_single_2020, zhang_densely_2018}建立在物理散射模型的基础上，并学习恢复模型中的传输图、大气光和其他变量。然而，物理散射模型对学习变量高度敏感，其中小的扰动可能导致输出图像中出现明显的伪影。最近的趋势\cite{song_vision_2022, liu_griddehazenet_2019, chen_gated_2019, deng_hardgan_2020, dong_multi-scale_2020, qin_ffa-net_2020, wu_contrastive_2021, wang_eaa-net_2021} 以端到端的方式模拟了模糊到清晰的图像转换。例如，AECR-Net \cite{wu_contrastive_2021} 在包含同一场景的成对模糊和非模糊图像的数据集上进行训练。然而，这些模型可能无法推广到分布外的数据。
+    \item \textbf{散射介质三维重建}。散射介质中的 3D 重建与所提出的方法共享相似的多视图设置。他们的目标是根据从不同视点拍摄的同一朦胧场景的多张图像重建 3D 场景。然而，这些方法依赖于主动光源\cite{murez_photometric_2017, narasimhan_structured_2005, fujimura_photometric_2018, tsiotsios_backscatter_2014}、额外的感官数据，例如深度传感器或激光器\cite{caraffa_stereo_2013, li_simultaneous_2015, heide_imaging_2014, satat_towards_2018, wang_programmable_2018}。这种最近的方法\cite{fujimura_dehazing_2021, caraffa_stereo_2013, song_deep_2019, li_simultaneous_2015}依靠基于学习的技术从图像和稀疏点云中提取特征，并使用它们进行多视图立体以恢复密集的几何表示。相反，我们仅使用来自多视图的模糊图像直接恢复场景辐射度和几何形状。
 \end{enumerate}
 
-\subsection{散射介质的理论模型}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/dehazing-nerf/t-haze.pdf}
+    \caption{射线经过带雾空气和硬质表面的示意图。}
+    \label{fig:dehazing-nerf t-haze decomposition}
+\end{figure}
 
-\subsection{研究动机与方法描述}
+\subsection{散射介质的理论模型}
+为什么使用 NeRF 去雾是一个自然合理的选择？我们首先证明体积渲染公式可以重新分解为DCP\cite{kaiming_he_single_2009}中广泛使用的薄雾方程。在有雾的场景中，公式可以分为两部分，分别对雾霾（图\ref{fig:dehazing-nerf t-haze decomposition}中的红色部分）和硬质结构（图\ref{fig:dehazing-nerf t-haze decomposition}中的蓝色部分）进行积分。假设$t_{haze}$（在图\ref{fig:dehazing-nerf t-haze decomposition}中）表示相机原点与采样光线与硬质结构的交点之间的距离，即雾度的深度。通过从硬质结构部分移出常数项 $T_{haze} = T(t_{haze})$，体渲染公式可以进一步解释为：
+\begin{align}
+    \textbf{c}(\textbf{r}) &= \int_{t_n}^{t_{haze}}T(t)\sigma(t)c(t)\text{d}t + T_{haze}\int_{t_{haze}}^{t_f}T'(t)\sigma(t)c(t)\text{d}t\\
+    \textbf{d}(\textbf{r}) &= \int_{t_n}^{t_{haze}}T(t)\sigma(t)t\text{d}t + T_{haze}\int_{t_{haze}}^{t_f}T'(t)\sigma(t)t\text{d}t,
+\end{align}
+其中$T'(t)=\exp(-\int_{t_{haze}}^{t}\sigma(\tau)\text{d}\tau)=T(t)/T_{t_{haze}}$。
+
+这样的分解形式正好可以与DCP中常见的带雾图像形成公式相对应：
+\begin{equation}
+    \mathbf{I}= \textcolor{red}{\mathbf{A} (1-\mathbf{T})} + \textcolor{blue}{\mathbf{J} \mathbf{T}}
+\end{equation}
+其中$\mathbf{T}=\mathbf{e}^{-\beta \cdot t_\text{haze}}$.
+
+我们先看蓝色部分。通过将图\ref{fig:dehazing-nerf t-haze decomposition}中红色区域的密度视为零，无雾图像 $\mathbf{J}$ 可以对应于$\int_{t_{haze}}^{t_f}T'(t)\sigma(t)c(t)\text{d}t$。累计透光度 $\mathbf{T}$ 对应于 ${T_{haze}}$。然后我们看红色部分，在均匀雾度的情况下， $σ(t)c(t)$ 变为常数，可以从等式的第一项移出，即：
+\begin{align}
+    \textcolor{red}{\int_{t_n}^{{t}_\text{haze}}\mathbf{T}(t){{\sigma}}(t){\mathbf{c}}(t)\mathbf{d}t} &= \int_{t_n}^{t_\text{haze}} \text{exp}(-\int_{t_n}^t {\sigma}\mathbf{d}\tau) {\sigma}{\mathbf{c}}\mathbf{d}t \\
+    &=\int_{t_n}^{t_\text{haze}} \text{exp}(-{\sigma}t) {\sigma}{\mathbf{c}}\mathbf{d}t \\
+    &={\sigma}{\mathbf{c}}\int_{t_n}^{t_\text{haze}} \text{exp}(-{\sigma}t) \mathbf{d}t \\
+    &={\sigma}{\mathbf{c}}(-\frac{1}{{\sigma}}\text{exp}(-{\sigma}t))\big|_{t_n}^{t_\text{haze}} \\
+    &=\textcolor{red}{\mathbf{A}(1-\mathbf{T})}
+\end{align}
+
+根据上述方程式的对应关系，我们很自然地使用NeRF来达到多视角去雾或进行雾浓度控制的目的。根据等式将场景划分为雾霾和固体结构。通过只修改雾霾区域的属性，就可以达到去雾和雾霾操纵的目的。然而，恢复方程中变量的准确值并非易事，即像素方向的雾度深度 $t_{haze}$ 和场景的隐式表示。主要原因如下：
+\begin{itemize}
+    \item \textbf{偏差的深度渲染}。估计 $t_{haze}$ 的一个直接想法是使用标准深度渲染函数对其进行近似。然而，注意到雾霾或漂浮物的体积密度不为零，因此方程式中雾霾的积分权重也不为零。距离小于 $t_{haze}$ 的非零权重会使方程式中的加权积分产生偏差，使渲染的深度通常小于实际雾度深度$t_{haze}$。
+    
+    \textbf{解决方案：}为了解决这种偏差，我们调整了深度渲染函数，通过将其整体权重更改为定制的替代函数 $w_D$（参见下文）。然后使用修改后的权重重新渲染像素深度图。这个新的权重函数是根据三个必要条件设计而成的，可以确保渲染的深度图非常接近实际的深度图。
+    \item \textbf{二义性问题}。此外，要学习准确的场景隐式表示，解决歧义问题很重要。原始 NeRF 方法仅使用光度误差来优化网络，然而颜色可以通过几何和辐射的不同组合来解释（即形状-辐射二义性\cite{zhang_nerf_2020}）。例如，在图 \ref{fig:dehazing-nerf taxonomy}中，渲染图像中的边缘可能会随着雾度密度的变化而出现或消失，并且不同观察方向的色差可能是由光衰减和视图相关效应引起的。
+    \textbf{解决方案：}我们通过使用距离和 RGB 值之间的相关性对其进行建模来解决多视图下朦胧场景的模糊性问题。我们在这两个变量之间添加协方差损失。这种损失有助于稳定训练过程并减少显色方面的歧义。
+\end{itemize}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/dehazing-nerf/taxonomy.pdf}
+    \caption{不同场景在雾天情况下的观察颜色和实际颜色情况的分类图。}
+    \label{fig:dehazing-nerf taxonomy}
+\end{figure}
+
+\subsection{深度权重函数}
+在清晰、无雾的图像上训练的 NeRF 网络的体积密度输出遵循一种模式，即在表面位置附近取大值，在相机原点和表面之间取接近于零的值。这种模式在物理上是合理的，并已被许多作品使用，例如 NeuS \cite{wang_neus_2021}，NeuralRGb-D\cite{azinovic_neural_2022} 和深度监督 NeRF\cite{deng_depth-supervised_2022}。这种模式允许方程式中的 NeRF 渲染权重 $w_{RGB}$， 在除表面附近以外的所有位置都取接近于零的值，渲染深度 $D$ 以准确地近似表面深度。
+
+然而，这种模式不再适用于雾天的场景。空气中悬浮粒子的体积密度不为零，可以取任意值。如果仍然使用普通体渲染公式，雾霾位置的权重会明显大于清晰场景中的权重，从而使渲染深度产生偏差。因此，需要针对有雾场景的深度权重设计一个深度权重函数。这对于确保准确的深度估计和高质量的去雾结果是必要的。通过将表面深度定义为：
+\begin{equation}
+    \hat{D} =\int_0^\infty w_D(t)\cdot t\text{d}t,
+\end{equation}
+我们利用固体结构的密度明显大于雾度的特性，并使用新的深度权重函数 $w_D$ 应遵循的三个条件：
+\begin{enumerate}
+    \item \textbf{散射不敏感性}: 给定两个深度值 $t_1$ 和 $t_2$，如果 $\mathbf{thresh} > \sigma (t_1) >> \sigma (t_2)$，则 $ \mathbf{w}_\text{D}(t_1) >> \mathbf{w}_\text{D}(t_2) > 0$ 且 $\frac{\mathbf{w}_\text{D}(t_1)}{\mathbf{w}_\text{D}(t_2)} >> \frac{\sigma (t_1)}{\sigma (t_2)}$。
+% 1) \textbf{Haze insensitivity}: $ \mathbf{w}_\text{D}(t_1) >> \mathbf{w}_\text{D}(t_2) $ if $ \mathbf{thresh} > \sigma (t_1) >> \sigma (t_2)$.
+空气中漂浮物质的体积密度明显小于固体表面的体积密度。因此，高体积密度的位置更有可能是表面点。因此，在体积密度更高的位置分配一个压倒性的更大权重非常重要。
+
+这个条件只需要在可能出现雾的区域中满足，因此我们设置一个阈值 $\mathbf{thresh}$，它是可能的雾体积密度的上限。值得注意的是，$\mathbf{thresh}$ 不需要是最小的上界，因为太大的值不会直接破坏雾和固体结构之间的区别。
+
+漂浮物质的体积密度明显小于固体表面的体积密度。在某种程度上，体积密度越高，更有可能出现在表面点上。因此，具有更高体积密度的位置应该具有压倒性的更大权重。此外，在多个表面互相覆盖的情况下，NeRF 可能会为被覆盖表面输出更高的体积密度。但是，覆盖表面的体积密度足够大，使其成为不透明。为了避免关注覆盖表面，设置了一个软阈值。如果两个点的体积密度都超过阈值，则它们都被视为不透明，权重的比较关系不需要保持。
+
+\item \textbf{遮挡感知性：} 给定两个深度值 $t_1$ 和 $t_2$，其中 $\mathbf{w}_\text{RGB}(t_1) >> \mathbf{w}_\text{RGB}(t_2)$，则 $ \mathbf{w}_\text{D}(t_1) >> \mathbf{w}_\text{D}(t_2)$。
+由于 NeRF~\cite{mildenhall_nerf_2020} 在其权重计算 $\mathbf{w}_\text{RGB}$ 中自然地编码了遮挡，因此新的权重输出不应破坏表面之间的遮挡关系。
+
+
+\textbf{归一化：} $ \int_0^{+\infty} \mathbf{w}_\text{D} \cdot {d}t = 1 $。
+\end{enumerate}
+
+我们深度权重函数的最终条件是一个归一化条件，它强制所有位置的权重总和为$1$。这个条件保证整个积分方程符合加权平均的形式。
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/dehazing-nerf/function-family.png}
+    \caption{不同阈值和 $p$ 值下函数 $w_\text{D}$ 的可视化示例：}
+    \label{fig:dehazing-nerf function-family}
+\end{figure}
+有许多解决方案可以满足我们概述的三个条件。这里，我们提供一个满足第一个条件的 $\rho_\text{D}$ 函数的示例：
+\begin{equation}
+    \rho_\text{D}(t) = 1 - \exp\left\{-\left[\frac{\sigma(t)}{\mathbf{thresh}}\right]^p\right\}.
+\end{equation}
+
+我们构造的 $\rho_\text{D}$ 函数在 $\sigma << \mathbf{thresh}$ 时近似于幂函数 $\mathbf{const}\cdot \sigma^p$，并在 $\sigma > \mathbf{thresh}$ 时逐渐收敛到 1。这里引入了两个因素：$p$ 和 $\mathbf{thresh}$。图 \ref{fig:dehazing-nerf function-family} 展示了不同设置下的 $\sigma-\rho_\text{D}$ 曲线。$\mathbf{thresh}$ 代表可能的雾化位置体积密度和可行的实体位置体积密度之间的边界。$p$ 表示对 $\mathbf{thresh}$ 的置信水平；$p$ 越高，雾化和实体结构之间的分离就越清晰。
+
+我们修改了 $\rho_\text{D}$ 函数以满足第二和第三个条件，得到：
+
+\begin{equation}
+w_\text{D}(t) = \frac{\rho_\text{D}(t) \mathbf{w}_\text{RGB}(t)\text{d}t}{\int_0^\infty \rho_\text{D}(t) \mathbf{w}_\text{RGB}(t)\text{d}t}.
+\end{equation}
+
+因此，为了满足遮挡感知的条件，我们将函数 $\rho_\text{D}$ 乘以 NeRF 渲染权重函数 $w_\text{RGB}$。然后，为了满足第三个条件，我们通过将函数 $w_\text{D}$ 除以 $\rho_\text{D}(t) w_\text{RGB}(t)\text{d}t$ 在 0 到无穷大范围内的积分来进行归一化。这个归一化条件保证了积分方程遵循加权平均的形式。
+
+通过构造满足所有三个条件的深度权重函数，我们能够精确地估计雾化场景中的深度，并实现高质量的去雾结果。
 
 \subsection{处理视角相关-颜色二义性}
+传统的神经辐射表征方法~\cite{mildenhall_nerf_2020}使用一个5D函数来编码点辐射，其输入为3D点坐标和视角方向，以建模Lambertian效应（如高光）。然而，在NeRF中，RGB辐射与视角方向之间的关系受到的限制较少。这在训练雾化场景时会导致严重的歧义。
+
+\subsubsection{为什么NeRF中的视角依赖性会导致在学习雾天场景表示时出现歧义}
+
+在雾化场景中，由于高光和雾/漂浮物的复合效应，同一3D点的颜色观测会因不同的视角而异。然而，NeRF网络中的限制并未提供一个基础来分离混合效应。网络会误解由于受到雾化颜色衰减而导致的颜色变化，并返回具有视角依赖性的辐射结果，即使实际上场景中的所有点都具有视角无关的辐射。
+
+一种简单直接的方法是利用Lambertian效应在雾天中被抑制的先验知识，显式地消除辐射场中的视角依赖性。在大多数情况下，这种方法确实是有用的。但它只是一种规避问题的方式。它无法表示在极具Lambertian效应的极度雾化场景和几乎没有雾化衰减效应的极度晴朗场景之间的中间情况。
+我们在这里提出了一种距离和辐射值之间的协方差损失，这在理论和实践上都解决了这个问题。
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/dehazing-nerf/s-multivalues_example.pdf}
+    \caption{相机位姿轨迹和弧长参数化的示例。我们假设相机沿着曲线移动，变量$s$表示当前相机位置和曲线原始位置之间的弧长距离。}
+    \label{fig:dehazing-nerf s-multivalues_example}
+\end{figure}
+
+\subsubsection{深度-辐射协方差损失函数}
+在本部分中，我们假设摄像机的运动遵循一个隐式轨迹曲线，如图\ref{fig:dehazing-nerf s-multivalues_example}所示。尽管图\ref{fig:dehazing-nerf s-multivalues_example}展示了一个简单而平滑的轨迹，但以下结论对于任意复杂的轨迹也成立。 对于固定的采样点 $\mathbf{P}_1$，从不同相机位置 $\mathbf{O}_i$ 的多条光线经过它。可以使用 $\mathbf{P}_1$、方向 $\mathbf{d}_i$ 和雾距离 ${t}_\text{haze\: i}$ 来反向表示 $\mathbf{O}_i$ 的坐标：
+\begin{equation}
+    \mathbf{O}_i = \mathbf{P}_1 - {t}_\text{haze\: i} \cdot \mathbf{d}_i。
+\end{equation}
+
+渲染方程中的项是$\mathbf{O}_i$和$\mathbf{d}_i$的函数，因此它们现在可以用$\mathbf{d}_i$、$\mathbf{P}_1$和${t}_\text{haze\: i}$来表示。我们将这些项列举如下：
+
+由于各种光效应引起的悬浮粒子辐射为：
+\begin{equation}
+    \mathbf{C_\text{haze}}(\mathbf{d}_i, \mathbf{P}_1, {t}_\text{haze\: i}) = \int_0^{{t}_\text{haze\: i}} \mathbf{T}(t)\hat{\sigma}(t)\hat{\mathbf{c}}(t)\mathbf{d}t,
+\end{equation}
+
+悬浮粒子引起的衰减因子为：
+\begin{equation}
+    \mathbf{T_\text{haze}}(\mathbf{d}_i, \mathbf{P}_1, {t}_\text{haze\: i}) = \mathbf{T}({t}_\text{haze}),
+\end{equation}
+
+在被悬浮粒子衰减之前从实体结构发出的辐射为：
+\begin{equation}
+    \mathbf{C_\text{struct}}(\mathbf{d}_i, \mathbf{P}_1, {t}_\text{haze\: i}) = \int_{{t}_\text{haze}\: i}^{\infty}\mathbf{T}'(t)\hat{\sigma}(t)t\mathbf{d}t,
+\end{equation}
+
+相机捕获的最终RGB值为：
+\begin{equation}
+\begin{split}
+    &\mathbf{C_\text{final}}(\mathbf{d}_i, \mathbf{P}_1, {t}_\text{haze\: i}) = \mathbf{C}(\mathbf{O}_i, \mathbf{d}_i) \\
+    = &\mathbf{C_\text{haze} + T_{haze} \cdot C_\text{struct}}. \label{eq:ObservedColor}
+\end{split}
+\end{equation}
+\newcommand{\slfrac}[2]{\left.#1\middle/#2\right.}
+
+将体积密度项$\hat{\sigma}(t) = \sigma(\mathbf{O} + t\mathbf{d})$和RGB颜色项$\hat{\mathbf{c}}(t) = \mathbf{c}(\mathbf{O} + t\mathbf{d})$展开后，可以证明在几乎所有有雾的场景中，对于所有相机起点，偏导数$\slfrac{\partial}{\partial {t}_\text{haze: i}}(\mathbf{C_\text{haze}})$和$\slfrac{\partial}{\partial {t}_\text{haze: i}}(\mathbf{T_\text{haze}})$均为非零值。相反，$\slfrac{\partial}{\partial {t}_\text{haze: i}}(\mathbf{C_\text{struct}})=0$始终成立。
+
+如图\ref{fig:dehazing-nerf s-multivalues_example}所示，摄像机起点运动曲线可以使用弧长参数化$\mathbf{s}$进行参数化。摄像机起点的坐标可以表示为$\mathbf{O}_i = \mathbf{O}(\mathbf{s}_i)$，其中$\mathbf{s}_i$是隐式轨迹曲线上的样本点。光线方向和雾深度也可以表示为：
+\begin{equation}
+    \mathbf{d}_i = \mathbf{Normalize}(\mathbf{O}(\mathbf{s}_i) - \mathbf{P}_1), \label{eq:direction}
+\end{equation}
+\begin{equation}
+    \mathbf{\tilde{t}_\text{haze}}(\mathbf{s}, \mathbf{P}_1) = t_\text{haze\: i} = \left\|\mathbf{O}(\mathbf{s}_i) - \mathbf{P}_1\right\|_2.
+\end{equation}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/dehazing-nerf/s-multivalues_relation.pdf}
+    \caption{根据图\ref{fig:dehazing-nerf s-multivalues_example}描述的场景，我们演示了随着摄像机沿曲线移动，摄像机与表面之间的距离减小，从而散射悬浮颗粒所导致的颜色（雾颜色）也会减小。射线与表面相交点处的透射率增加，因为漂浮物占据的自由空间减少了。但是，表面辐射独立于摄像机运动而改变（可能是由于镜面效应）。}
+    \label{fig:dehazing-nerf view-dependency_relation}
+\end{figure}
+
+通过将样本点的所有可观测变量写成弧长参数的函数，我们可以在二维可视化展示这些函数随$s$的变化，如图\ref{fig:dehazing-nerf view-dependency_relation}所示。对于固定在对象表面上的点$\mathbf{P}_1$，这些图清晰地显示了$\mathbf{C_\text{haze}}$和$\mathbf{T_\text{haze}}$与$\mathbf{\tilde{t}_\text{haze}}$相关，而$\mathbf{C_\text{struct}}$则不相关。此外，这些图说明了这些变量如何影响$\mathbf{C_\text{final}}$。换句话说，在方程\ref{eq:ObservedColor}中，$\mathbf{C_\text{struct}}$是唯一与${t}_\text{haze: i}$无关的项。
+
+值得注意的是，NeRF使用的光度损失仅与$\mathbf{C_\text{final}}$有关。因此，通过消除深度对$\mathbf{C_\text{struct}}$值的影响，训练过程可以恢复为无歧义的过程。对于表面点$\mathbf{P}_1$，$\mathbf{C_\text{struct}}$值近似于该点的辐射值$\mathbf{c}(\mathbf{P}_1, \mathbf{d}_i)$。为了消除对$\mathbf{C_\text{struct}}$的影响，我们只需要消除对$\mathbf{c}(\mathbf{P}_1, \mathbf{d}_i)$的影响。对于表面点之前采样的第一个点$\mathbf{P}_2$，$\mathbf{C_\text{struct}}$是在$\mathbf{P}_1$处的值和$\mathbf{c}(\mathbf{P}_2, \mathbf{d}_i)$的组合。当消除对$\mathbf{P}_1$处的$\mathbf{C_\text{struct}}$的深度影响时，该过程只需要在$\mathbf{c}(\mathbf{P}_2, \mathbf{d}_i)$上进行。这种推导可以递归传递并扩展到所有采样点。因此，为了消除深度对$\mathbf{C_\text{struct}}$的影响，我们只需要在$\mathbf{c}(\mathbf{P}_i, \mathbf{d}_i)$上消除它。
+
+我们提出了一个针对每个固定采样点的协方差损失，如下所示：
+\begin{equation}
+    \mathcal L_\text{cov}(\mathbf{P}_i) = \sum_{\mathbf{O}_i \in \mathbf{O}}(\mathbf{c}(\mathbf{P}_i, \mathbf{d}_i)-\bar{c})\cdot ({t}_\text{haze} - {\bar{t}}_\text{haze}))
+\end{equation}
+
+通过对采样点反投影到各个摄像机平面，并最小化射线深度和渲染颜色的协方差，我们可以最大程度地将视角相关颜色和雾天带来的随深度增加的颜色损失解耦。从而分离悬浮粒子和硬质的表面结构，最终实现从退化的雾天图片中优化准确场景表达这一问题。
+
+\section{本章小结}
