@@ -1,11 +1,11 @@
-\chapter{文献综述}
+\chapter{相关理论与方法}
 \label{chapter:related-work}
-在本章中，我们将对国内外现有相关研究工作现状进行阐述。在\ref{sec: related-work implicit scene representation learning}节中，我们将介绍以神经辐射场\cite{mildenhall_nerf_2020}为代表的使用隐式函数进行场景表示学习的主流方法。纵观神经隐式场发展的历程，人们用来学习场景外观的地图表示方法经历了从纯隐式的多层感知机地图到半隐式的体素地图、低维张量地图的变革，在该节中我们将详细介绍这一变换的过程和内在原因。在\ref{sec: related-work realistic rendering}一节中，我们将介绍人们基于神经辐射场上为了使渲染更具真实感所提出的一系列方法，包括引入无界场景压缩、前后景分割等。在\ref{sec: related-work density-distance fields}一节中，我们将介绍辐射-距离混合场景表示的方法。在该节中，我们将首先分析单纯使用辐射场同时表示场景几何和外观所带来的二义性问题，接着从采样策略、体渲染方法、多元传感信息融合以及模型优化几个角度分别介绍相关工作所使用的方法。
+本章将对国内外现有相关研究工作现状进行阐述。在\ref{sec: related-work implicit scene representation learning}节中将介绍以神经辐射场\cite{mildenhall_nerf_2020}为代表的使用隐式函数进行场景表示学习的主流方法。纵观神经隐式场发展的历程，人们用来学习场景外观的地图表示方法经历了从纯隐式的多层感知机地图到半隐式的体素地图、低维张量地图的变革，在该节中将详细介绍这一变换的过程和内在原因。在\ref{sec: related-work realistic rendering}一节中，将介绍人们基于神经辐射场上为了使渲染更具真实感所提出的一系列方法，包括引入无界场景压缩、前后景分割等。在\ref{sec: related-work density-distance fields}一节中，我们将介绍辐射-距离混合场景表示的方法。在该节中，我们将首先分析单纯使用辐射场同时表示场景几何和外观所带来的二义性问题，接着从采样策略、体渲染方法、多元传感信息融合以及模型优化几个角度分别介绍相关工作所使用的方法。
 
 \section{神经隐式场景表示学习}
 \label{sec: related-work implicit scene representation learning}
 
-神经隐式场景表示，即是将三维场景的几何、外观、语义等信息抽象为一个隐式表示的函数，通过神经网络的回归能力来拟合这些隐函数。在本节中，我们将介绍使用以神经辐射场和神经符号距离场为主的神经隐式表征进行场景表示学习的主要方法。在\ref{sec: related-work MLP-based neural implicit representations}节，我们将通过神经辐射场和DeepSDF介绍使用多层感知机表示场景隐式函数的基本概念，在\ref{sec: related-work grid-based implicit representations}和\ref{sec: related-work multi-plane-based implicit representations}两节中介绍神经隐式场景表示的主干模型的改进。
+神经隐式场景表示，即是将三维场景的几何、外观、语义等信息抽象为一个隐式表示的函数，通过神经网络的回归能力来拟合这些隐函数。在本节中，我们将介绍使用以神经辐射场和神经符号距离场为主的神经隐式表征进行场景表示学习的主要方法。在\ref{sec: related-work MLP-based neural implicit representations}节，我们将通过神经辐射场和DeepSDF介绍使用多层感知机表示场景隐式函数的基本概念，在\ref{sec: related-work grid-based implicit representations}节中介绍神经隐式场景表示的主干模型的改进。
 
 
 \subsection{基于多层感知机的场景表示}
@@ -13,7 +13,7 @@
 
 在2020年，Ben Mildenhall等人在ECCV 2020会议上发表了神经辐射场\cite{mildenhall_nerf_2020}（NeRF）用来解决新视角合成任务（如图\ref{fig:related-work novel-view-synthesis-task}所示）。新视角合成任务输入为已知位姿的多视角图片$\{{I}_i\}^N$，希望在该场景的任意给定新视角下，渲染一张具有真实感的图片${I}_\text{target}$。所谓神经辐射场，即是在假设三维空间中任意一个三维点均在向外辐射光线并阻挡其他光线的传播这一前提下，使用一个隐式神经网络建模每个三维点的辐射量。
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/NeRF setting.pdf}
     \caption{使用神经辐射场\cite{mildenhall_nerf_2020}进行新视角合成的基本流程}
@@ -40,7 +40,7 @@
 \end{enumerate}
 
 
-体渲染公式如公式\ref{eq: related-work volume rendering}所示，其中$T(t)$为累计的透光度，如公式\ref{eq: related-work transmittance}所示，通过体渲染，我们可以将三维辐射场的场景信息投影到二维的成像平面上，进行真实感的渲染。
+体渲染公式如公式\ref{eq: related-work volume rendering}所示，其中$T(t)$为累计的透光度，如公式\ref{eq: related-work transmittance}所示，通过体渲染，可以将三维辐射场的场景信息投影到二维的成像平面上，进行真实感的渲染。
 
 
 \begin{figure}[t]
@@ -70,7 +70,7 @@
 
 
 
-\subsection{基于体素网格的场景表示}
+\subsection{基于张量的场景表示}
 \label{sec: related-work grid-based implicit representations}
 虽然多层感知机作为一个万能函数拟合器在理论上可以无限接近场景的隐式表征函数，但这样的表示主干网络在实践中存在若干问题：
 \begin{enumerate}
@@ -83,7 +83,7 @@
 \subsubsection{传统密集体素网格地图}
 早期使用体素网格地图表示的方法\cite{fridovich-keil_plenoxels_2022, kondo_vaxnerf_2021, yu_monosdf_2022}通常将三维场景离散化为一个三维空间网格，其中的每个体素（Voxel）的每个节点上存储该点上的隐式函数值。当需要查询任意一个连续空间中的三维点的隐函数值时，只需查询其周围的八个相邻节点，并使用三线性插值计算目标点的隐函数值。
 
-我们用$\mathcal{G}_\theta$来表示一个分辨率为$R_H\times R_W\times R_D$的体素网格，则使用体素网格来作为隐式场骨干模型的方法可以写作：
+若用$\mathcal{G}_\theta$来表示一个分辨率为$R_H\times R_W\times R_D$的体素网格，则使用体素网格来作为隐式场骨干模型的方法可以写作：
 \begin{equation}
     \hat{s} = \mathtt{interp}(\mathbf{x}, \mathcal{G}_\theta),
 \end{equation}
@@ -100,7 +100,7 @@
 
 为了弥补这样的缺陷，Plenoxels\cite{fridovich-keil_plenoxels_2022}中提出在三维网格中同时使用球面高斯谐波（Spherical Harmonics, SH）函数来建模场景的视角相关特性，如图\ref{fig:related-work plenoxels pipeline}所示。SH函数可以表示为一组具有不同频率和幅度的球面函数，其中每个函数代表在特定方向上的照射光线所对应的光照贡献。由于球面高斯谐波函数是以角度为参数的球面函数，因此能够很好地表达几何结构与视角之间的关系。通过计算遍历每个像素所对应的差分方程，可以得到具有视角相关效果的图像。从实践上，即是使三维网格在存储场景的辐射颜色和体密度之外，同时存储球面高斯谐波系数组，在查询时通过将插值得到的球面谐波系数带入谐波方程，来计算视角相关颜色。 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=.5\textwidth]{undergraduate-thesis/images/related-work/plenoxels-result.pdf}
     \caption{Plenoxels\cite{fridovich-keil_plenoxels_2022}和原始NeRF\cite{mildenhall_nerf_2020}的性能对比}
@@ -109,7 +109,7 @@
 
 图\ref{fig:related-work plenoxels-result}中展示了Plenoxels方法和NeRF方法的性能对比，其中横轴为训练时间，纵轴为PSNR指标（越高越好）。由图可知，使用密集体素网格可以为隐式场训练带来成百倍的速度提升，且在最终渲染的效果上也要优于基于多层感知机的方法。
 
-除此以外，当使用密集体素网格重建三维隐式表面时，由于体素网格不能提供多层感知机中的平滑特性（我们将在\ref{sec: related-work density-distance fields}节中讨论该特性），重建的三维表面通常会出现嘈杂的现象（图\ref{fig:related-work monosdf result}）。
+除此以外，当使用密集体素网格重建三维隐式表面时，由于体素网格不能提供多层感知机中的平滑特性（本文将在\ref{sec: related-work density-distance fields}节中讨论该特性），重建的三维表面通常会出现嘈杂的现象（图\ref{fig:related-work monosdf result}）。
 
 \subsubsection{隐式体素参数网格地图}
 虽然上述的密集体素网格在渲染速度和效果上均有较大的提升，然而在面对更大规模的场景时，仅使用密集网格存储隐函数信息的网络表达能力并不足够，且使用密集网格进行表面重建也会遇到嘈杂的结果，为此，人们提出在网格中存储空间特征而非显式的隐函数值\cite{liu_neural_2021, takikawa_neural_2021, yu_monosdf_2022, huang_di-fusion_2021, peng_convolutional_2020}，并使用一个后续的多层感知机解码器来计算最终隐函数值。
@@ -118,7 +118,7 @@
 \begin{equation}
     \hat{s} = f_\theta(\gamma(\mathbf{x}), \mathtt{interp}(\mathbf{x}, \Phi_\theta),
 \end{equation}
-其中$\gamma(\mathbf{x})$为$\mathbf{x}$的位置编码，我们将在\ref{sec: related-work positional encoding}一节讨论位置编码。
+其中$\gamma(\mathbf{x})$为$\mathbf{x}$的位置编码，本文将在\ref{sec: related-work positional encoding}一节讨论位置编码。
 
 在此指上，为了进一步提高网络在场景细节上的建模能力，人们引入了多分辨率的体素参数网格地图\cite{yu_monosdf_2022}，即使用多个不同分辨率的网格$\{\Phi^l_\theta\}^L_{l=1}$代替单一参数网格$\Phi_\theta$。记所有不同分辨率的网格中最小的网格($l=1$)的分辨率为$R_{\min}^3$，最大的网格($l=L$)分辨率为$R_{\max}^3$，则第$l$大的网格的分辨率可以表示为：
 \begin{equation}
@@ -137,7 +137,7 @@ $\mathtt{floor}$为下取整函数，$\mathtt{concat}$表示参数拼接。
     \label{fig:related-work monosdf result}
 \end{figure}
 
-我们在图\ref{fig:related-work monosdf result}中比较神经隐式表面表示的不同设计选择，我们观察到密集的 SDF 网格会导致嘈杂的重建结果，而 MLP 和单分辨率体素网格改进了结果，但重建的几何图形往往过于平滑而缺少细节，使用多分辨率体素网格可获得较好的结果。
+本文在图\ref{fig:related-work monosdf result}中比较神经隐式表面表示的不同设计选择，观察到密集的 SDF 网格会导致嘈杂的重建结果，而 MLP 和单分辨率体素网格改进了结果，但重建的几何图形往往过于平滑而缺少细节，使用多分辨率体素网格可获得较好的结果。
 
 \subsubsection{基于哈希编码的体素参数网格地图}
 由于体素参数地图方法在存储大规模场景时，需要使用高分辨率的参数网格来获得足够的细节并保证精度，这导致了空间复杂度高达$\mathcal{O}(N^3)$。然而，在三维场景中，人们通常只关注表面，其所需要的数据量只随场景大小呈平方的空间复杂度（$\mathcal{O}(N^2)$）。为了解决这一问题，M\"uller等人提出了一种基于哈希编码的体素参数网格地图——InstantNGP\cite{muller_instant_2022}。 InstantNGP使用哈希表来存储隐式函数值，只需控制哈希表的大小随场景大小平方增长即可。
@@ -149,7 +149,7 @@ $\mathtt{floor}$为下取整函数，$\mathtt{concat}$表示参数拼接。
     \label{fig:related-work instantngp}
 \end{figure}
 
-如图\ref{fig:related-work instantngp}所示，InstantNGP沿用了多分辨率体素网格的基本框架，在查询任意一点的三维场景隐函数值时，首先需要查询其在各个层次的网格上的八个相邻节点，接着将节点编号作为索引查询哈希表，将查询结果经三线性插值之后拼接形成三维点特征。我们可以将这个过程表示为：
+如图\ref{fig:related-work instantngp}所示，InstantNGP沿用了多分辨率体素网格的基本框架，在查询任意一点的三维场景隐函数值时，首先需要查询其在各个层次的网格上的八个相邻节点，接着将节点编号作为索引查询哈希表，将查询结果经三线性插值之后拼接形成三维点特征。可以将这个过程表示为：
 \begin{equation}
     \hat{s} = f_\theta(\gamma(\mathbf{x}), \mathtt{concat}\{\mathtt{interp}(h^l(\mathbf{x}), \Phi_\theta)\}_{l=1}^L),
 \end{equation}
@@ -159,19 +159,17 @@ $\mathtt{floor}$为下取整函数，$\mathtt{concat}$表示参数拼接。
 \end{equation}
 $T, \pi^l$为随机大质数。
 
-\subsection{低维张量地图表示}
-\label{sec: related-work multi-plane-based implicit representations}
 \subsubsection{基于张量分解的向量-矩阵地图表示}
 虽然InstantNGP基于哈希表的存储数据结构可以有效地缓解基于体素网格的场景表示中高空间复杂性的问题，然而研究者发现现有方法所使用的体素网格中绝大部分体素均属于空白空间，因而网格的使用率实际并不高。Anpei等人\cite{chen_tensorf_2022}的工作TensoRF中利用了一个事实，即特征网格可以自然地被视为 4D 张量，其中它的三个模式对应于网格的 XYZ 轴，第四个模式代表特征通道维度，从而解决了体素网格表示的低效问题，从而产生了一系列简单而有效的方法。TensoRF利用经典张量分解技术（已广泛应用于各个领域的高维数据分析和压缩 \cite{kolda_tensor_2009}），将辐射场的张量分解为多个低秩张量分量，从而获得准确且紧凑的场景表示。
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/Tensor Decomp.png}
     \caption{张量分解\cite{chen_tensorf_2022}。左图：CP 分解，它将张量分解为向量外积之和。右图：TensoRF的向量矩阵分解，它将张量分解为向量矩阵外积的总和。}
     \label{fig:related-work tensor-decomp}
 \end{figure}
 
-传统的CP张量分解（如式\ref{eq: related-work CP decomp}所示），将三维张量$\mathcal{T}\in\mathbb{R}^{I\times J\times K}$分解为三组秩为一的向量乘积的和。TensoRF将CP分解拓展为向量-矩阵分解模式（如式\ref{eq: related-work TensoRF decomp}所示）。对于每个分解单元，我们将CP-分解中的其中两个分量合并，不使用单独的向量，而是组合每两个模式并用矩阵表示它们，从而允许每个分解单元使用较少数量的组件进行充分参数化。
+传统的CP张量分解（如式\ref{eq: related-work CP decomp}所示），将三维张量$\mathcal{T}\in\mathbb{R}^{I\times J\times K}$分解为三组秩为一的向量乘积的和。TensoRF将CP分解拓展为向量-矩阵分解模式（如式\ref{eq: related-work TensoRF decomp}所示）。对于每个分解单元，将CP-分解中的其中两个分量合并，不使用单独的向量，而是组合每两个模式并用矩阵表示它们，从而允许每个分解单元使用较少数量的组件进行充分参数化。
 \begin{equation}
     \mathcal{T} = \sum_{r=1}^R\mathbf{v}_r^1\circ\mathbf{v}_r^2\circ\mathbf{v}_r^3
     \label{eq: related-work CP decomp}
@@ -182,7 +180,7 @@ $T, \pi^l$为随机大质数。
     \label{eq: related-work TensoRF decomp}
 \end{equation}
 
-TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐射场建模为张量，它们沿相应的 (XYZ) 轴描述场景，并用于计算可微分光线行进中的体积密度 $\sigma$ 和视角相关颜色 $c$。对于每个着色位置$ \mathbf{x} = (x, y, z)$，我们使用来自向量/矩阵因子的线性/双线性插值结果来有效地计算张量分量的特征。该特征被进一步用于渲染，从而得到一个紧致的神经隐式表示。
+TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐射场建模为张量，它们沿相应的 (XYZ) 轴描述场景，并用于计算可微分光线行进中的体积密度 $\sigma$ 和视角相关颜色 $c$。对于每个着色位置$ \mathbf{x} = (x, y, z)$，使用来自向量/矩阵因子的线性/双线性插值结果来有效地计算张量分量的特征。该特征被进一步用于渲染，从而得到一个紧致的神经隐式表示。
 
 \begin{figure}[ht]
     \centering
@@ -192,10 +190,10 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \end{figure}
 
 \subsubsection{多平面地图表示}
-受TensoRF启发，研究者进一步将张量分解的概念进一步泛化，仅使用多个互相正交的平面来代替体素网格\cite{fridovich-keil_k-planes_2023, cao_hexplane_2023, reiser_merf_2023, chan_efficient_2022}。其中K-Planes\cite{fridovich-keil_k-planes_2023}将$d$维体素张量使用$k=\frac{d(d-1)}{2}$个平面表示，即$d$个维度的任意两维均用一个平面表示，如图\ref{fig:related-work kplane-teaser}所示。例如，对于静态 3D 场景，这会产生三平面，其中3个平面代表 XY、XZ 和 YZ。而对于动态 4D 场景，这会产生六平面，其中6 个平面，包括三个纯空间平面和三个时空平面 X-t、Y-t 和 Z-t。如果我们希望表示一个 5D 空间，我们可以使用$\frac{5\times4}{2}=10$个平面。
+受TensoRF启发，研究者进一步将张量分解的概念进一步泛化，仅使用多个互相正交的平面来代替体素网格\cite{fridovich-keil_k-planes_2023, cao_hexplane_2023, reiser_merf_2023, chan_efficient_2022}。其中K-Planes\cite{fridovich-keil_k-planes_2023}将$d$维体素张量使用$k=\frac{d(d-1)}{2}$个平面表示，即$d$个维度的任意两维均用一个平面表示，如图\ref{fig:related-work kplane-teaser}所示。例如，对于静态 3D 场景，这会产生三平面，其中3个平面代表 XY、XZ 和 YZ。而对于动态 4D 场景，这会产生六平面，其中6 个平面，包括三个纯空间平面和三个时空平面 X-t、Y-t 和 Z-t。如果希望表示一个 5D 空间，可以使用$\frac{5\times4}{2}=10$个平面。
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/hadamard-product.png}
     \caption{平面特征的逐元素加法（左）与乘法（右）的比较。在这两种情况下，假设每个平面中只有单个条目为+1，其余部分均为零，通过乘法可以选择单个 3D 点，但通过加法只能产生相交线。这说明乘法可以提高显式模型的表达能力\cite{fridovich-keil_k-planes_2023}。}
@@ -208,10 +206,9 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \end{equation}
 其中$c\in C$为场景中的平面集合，在每个平面中查询$\mathbf{q}$点处的特征，通过逐像素求乘积得到高维空间中点的特征。
 
-\subsection{小结}
-在本节中，我们介绍了神经隐式场出现以来，所使用的场景表示从多层感知机\cite{mildenhall_nerf_2020,park_deepsdf_2019, mescheder_occupancy_2019, shim_snerl_2023, zhi_-place_2021}逐渐发展为体素网格\cite{fridovich-keil_plenoxels_2022,yu_monosdf_2022,muller_instant_2022,jiang_instantavatar_2022}、多平面\cite{chen_tensorf_2022,fridovich-keil_k-planes_2023,cao_hexplane_2023}等场景表示方法。
-
-虽然多平面的方法可以对一个简单场景进行高效、准确的表示学习，但我们发现，当场景规模逐渐从物体、室内场景基本扩展到室外自动驾驶大场景下时，使用单一的多平面场景表示反而会产生退化的效果。在本文中，我们将提出一种混合场景表示方法，使得即便在更大规模的复杂场景中，依然可以用较小的存储空间获得准确的场景表示。
+\noindent\textbf{小结：}
+本节介绍了神经隐式场出现以来，所使用的场景表示从多层感知机\cite{mildenhall_nerf_2020,park_deepsdf_2019, mescheder_occupancy_2019, shim_snerl_2023, zhi_-place_2021}逐渐发展为体素网格\cite{fridovich-keil_plenoxels_2022,yu_monosdf_2022,muller_instant_2022,jiang_instantavatar_2022}、多平面\cite{chen_tensorf_2022,fridovich-keil_k-planes_2023,cao_hexplane_2023}等场景表示方法。
+虽然多平面的方法可以对一个简单场景进行高效、准确的表示学习，但当场景规模逐渐从物体、室内场景基本扩展到室外自动驾驶大场景下时，使用单一的多平面场景表示反而会产生退化的效果。本文将提出一种混合场景表示方法，使得即便在更大规模的复杂场景中，依然可以用较小的存储空间获得准确的场景表示。
 
 \newpage
 \section{真实感的神经渲染方法：场景扭曲变换}
@@ -249,24 +246,26 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \end{equation}
 其中$V$为相机原点$\mathbf{o}$朝方向$\mathbf{d}$发射的视锥，$p$为$V$中点。
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/related-work/mipnerf-intersection.png}
     \caption{NeRF方法产生走样原因的示意图\cite{barron_mip-nerf_2021}。}
     \label{fig:related-work mip-nerf intersection}
 \end{figure}
 
-这样的简化必然会导致渲染误差的存在，进而产生走样的渲染结果。如图\ref{fig:related-work mip-nerf intersection}所示，当我们分别从两个不同远近、不同角度的视角同时观察到空间中的某个三维点。NeRF沿着每个像素的光线提取点采样位置编码特征，这些点采样特征忽略了每条射线观察到的体积的形状和大小，因此两个不同的相机以不同的比例对同一位置进行成像可能会产生相同的模糊点采样特征，从而显着降低 NeRF 的性能。
+这样的简化必然会导致渲染误差的存在，进而产生走样的渲染结果。如图\ref{fig:related-work mip-nerf intersection}所示，当分别从两个不同远近、不同角度的视角同时观察到空间中的某个三维点。NeRF沿着每个像素的光线提取点采样位置编码特征，这些点采样特征忽略了每条射线观察到的体积的形状和大小，因此两个不同的相机以不同的比例对同一位置进行成像可能会产生相同的模糊点采样特征，从而显着降低 NeRF 的性能。
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/mipnerf-cone.png}
     \caption{NeRF (a) 沿着从相机投影中心通过每个像素的光线进行采样，然后使用位置编码 (PE) $\gamma$ 对这些点进行编码以产生特征$\gamma(x)$。 Mip-NeRF (b) 对由相机像素定义的 3D 圆锥台进行推理，使用集成位置编码 (IPE) 对这些锥形截锥体进行特征化，使用多元高斯近似截锥体，然后计算积分 $E[\gamma(x)]$以近似超采样的效果\cite{barron_mip-nerf_2021}。}
     \label{fig:related-work mip-nerf cone tracing}
 \end{figure}
 
-一个直接的解决方案是采用离线光线追踪中使用的策略：通过发射多条光线并对每个像素进行超采样。但这对于像 NeRF 这样的神经体积表示来说是非常昂贵的，它需要数百次查询多层感知机网络来渲染一条射线，并需要几个小时甚至几天来重建一个场景。Mip-NeRF \cite{barron_mip-nerf_2021}提出将采样过程显式建模为投射锥体而不是射线的过程，并对每个采样的锥台使用一个各向异性的高斯椭球表示。为了模拟对整个锥台进行超采样，Mip-NeRF提出用高斯椭球上位置编码的均值近似每个锥台内体积的位置编码的平均，即集成位置编码（Integrated Positional Encoding，IPE）。
-\begin{figure}[h]
+一个直接的解决方案是采用离线光线追踪中使用的策略：通过发射多条光线并对每个像素进行超采样。但这对于像 NeRF 这样的神经体积表示来说是非常昂贵的，它需要数百次查询多层感知机网络来渲染一条射线，并需要几个小时甚至几天来重建一个场景。Mip-NeRF \cite{barron_mip-nerf_2021}提出将采样过程显式建模为投射锥体而不是射线的过程，并对每个采样的锥台使用一个各向异性的高斯椭球表示。
+
+为了模拟对整个锥台进行超采样，Mip-NeRF提出用高斯椭球上位置编码的均值近似每个锥台内体积的位置编码的平均，即集成位置编码（Integrated Positional Encoding，IPE）。
+\begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/mipnerf-encoding.png}
     \caption{NeRF（左）和集成位置编码（IPE）（右）的一维可视化。由于 NeRF 沿每条射线对点进行采样并对所有频率进行同等编码，因此高频 PE 特征混叠，从而导致渲染伪影。通过在每个区间上使用集成位置编码特征，当频率周期与被集成的间隔大小相近时，IPE特征的高频维度缩小到零，从而产生隐式编码大小的抗锯齿特征。\cite{barron_mip-nerf_2021}}
@@ -284,7 +283,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 
 由图\ref{fig:related-work mip-nerf encoding}，IPE 特征的行为很直观：如果位置编码中的特定频率的周期大于用于构造 IPE 特征的区间宽度，则该频率的编码不受影响。但是，如果周期小于间隔，则该频率的编码将按比例缩小至零。简而言之，IPE 保留了在一个区间内恒定的频率并温和地“移除”在一个区间内变化的频率，而 PE 保留了直到某个手动调整的超参数 L的所有频率。通过以这种方式缩放每个三角函数值，IPE可以有效地抗锯齿位置编码功能，可以平滑地编码空间体积的大小和形状。
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/related-work/mipnerf-multi-scale.png}
     \caption{Mip-NeRF\cite{barron_mip-nerf_2021} 和基线模型在不同图片分辨率上渲染的效果对比。}
@@ -312,29 +311,18 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
     \mathtt{contract}(\mathbf{x}) = \left\{\begin{matrix}&\mathbf{x}&||\mathbf{x}||<1\\&(2-\frac{1}{||\mathbf{x}||})(\frac{\mathbf{x}}{||\mathbf{x}||})&||\mathbf{x}||\geq1\end{matrix}\right.
 \end{equation}
 
-\subsection{小结}
-在本节中，我们介绍了使用场景扭曲变换提高场景表示模型利用率的几种方法，然而目前的扭曲变换方法无法解决在更大规模的室内、室外复杂场景的高效表达，因而限制了神经隐式场在自动驾驶等领域的发展。在本文中我们提出基于神经点云的场景扭曲变换，使得场景表示可以自适应地拟合大规模场景。
+\noindent\textbf{小结：}
+本节介绍了使用场景扭曲变换提高场景表示模型利用率的几种方法，然而目前的扭曲变换方法无法解决在更大规模的室内、室外复杂场景的高效表达，因而限制了神经隐式场在自动驾驶等领域的发展。本文提出基于神经点云的场景扭曲变换，使得场景表示可以自适应地拟合大规模场景。
 
 
 \newpage
 \section{辐射-距离混合隐式场}
 \label{sec: related-work density-distance fields}
-在本章的前两节中，我们介绍了以神经辐射场的神经场景表示的发展，然而单一的辐射场景表示对于场景几何的建模能力较差。在本节中，我们将首先分析辐射场这一不足的原因，接着分别从采样策略、体渲染模型、多元传感信息融合和混合隐式场优化的几个方面介绍辐射-距离混合隐式场。
+本章的前两节介绍了以神经辐射场的神经场景表示的发展，然而单一的辐射场景表示对于场景几何的建模能力较差。本节将首先分析辐射场这一不足的原因，接着分别从采样策略、体渲染模型、多元传感信息融合和混合隐式场优化的几个方面介绍辐射-距离混合隐式场。
 
 \subsection{神经辐射场的形状-辐射二义性}
 \label{sec: related-work shape-radiance ambiguity}
 在没有正则化的情况下，NeRF\cite{mildenhall_nerf_2020}对仅依赖于视图的外观进行建模的能力导致 3D 形状和辐射之间存在一个二义性，使得网络可以接受退化的内在形状，而渲染出真实感颜色。对于任意的、不正确的形状，可以证明存在一组辐射场可以完美地解释训练图像，但不能很好地推广到新的测试视图。
-
-为了说明这种歧义，假设对于给定的场景，我们将几何体表示为一个单位球体。换句话说，让我们将 NeRF 的不透明度场固定为在单位球体表面为 1，在其他地方为 0。然后，对于每个训练图像中的每个像素，我们将穿过该像素的光线与球体相交，并将交点处（以及沿光线方向）的辐射值定义为该像素的颜色。这个人工构造的解决方案是一个有效的 NeRF 重建，它完美地适合输入图像。
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/shape-radiance ambiguity.png}
-    \caption{形状-辐射二义性示意图\cite{zhang_nerf_2020}}
-    \label{fig:related-work shape-radiance ambiguity}
-\end{figure}
-
-如图\ref{fig:related-work shape-radiance ambiguity}所示，假设一个二维曲面$S^*$的形状为图中所示，相机$C_0, C_1$分别从不同角度观察曲面上一点，由图可以看出，如果网络实际学到的几何形状为图中$\hat{S}$所代表的单位圆，而将$C_0, C_1$观察到的颜色“贴”在单位圆上。这样即使网络学习到的几何与真实几何形状完全不同，也可以渲染出真实感的颜色。这种二义性被叫做“形状-辐射二义性”\cite{zhang_nerf_2020}，因而由辐射场建模的场景几何通常被认为是欠约束的。
 
 基于这一观察，近年来，研究者提出同时优化辐射和距离场，并在体渲染过程中将这两个完全不同的隐式场的输出进行融合\cite{oechsle_unisurf_2021,gropp_implicit_2020,yariv_multiview_2020,yariv_volume_2021,wang_neus_2021,shao_doublefield_2022,darmon_improving_2022,ueda_neural_2022,long_sparseneus_2022,yu_monosdf_2022,wang_pet-neus_2023,yuan_monocular_2023,liang_hr-neus_2023,chen_dehazenerf_2023,zhu_vdn-nerf_2023,azinovic_neural_2022, sun_neural_2022}。 简单来说，就是将神经符号距离场（Neural SDF）通过几何变换转换为辐射场中体密度的过程。然而，由于这两种隐式场天然的差距，这一融合并不是一件易事。为了弥补隐式场直接的领域差距，研究者在采样策略\cite{yariv_volume_2021, mildenhall_nerf_2020, barron_mip-nerf_2022, oechsle_unisurf_2021}，体渲染方法\cite{oechsle_unisurf_2021,yariv_volume_2021,wang_neus_2021}，融合多元传感信息\cite{azinovic_neural_2022,yu_monosdf_2022}和隐式场优化进行了大量的研究工作，如图\ref{fig:related-work sdfstudio}所示\cite{yu_sdfstudio_2022}。
 
@@ -346,7 +334,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 \end{figure}
 
 \subsection{采样策略}
-神经辐射场中首次将隐式表达用于体积渲染积分的管线中，然而在计算机实现中我们必须对体积积分进行离散化，使用有限的采样点最大限度地还原连续体积中的密度分布。因此，选取合适数量、位置的采样点对于隐式场场景表示学习格外重要。在本节中，我们首先介绍NeRF\cite{mildenhall_nerf_2020}中的分层采样方法，接着介绍后续工作中对该方法的改进。
+神经辐射场中首次将隐式表达用于体积渲染积分的管线中，然而在计算机实现中必须对体积积分进行离散化，使用有限的采样点最大限度地还原连续体积中的密度分布。因此，选取合适数量、位置的采样点对于隐式场场景表示学习格外重要。本节首先介绍NeRF\cite{mildenhall_nerf_2020}中的分层采样方法，接着介绍后续工作中对该方法的改进。
 
 \subsubsection{分层采样}
 \label{sec: coarse-to-fine sampling}
@@ -360,11 +348,11 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 
 
 \subsubsection{隐式表面引导的采样}
-在混合隐式表达中，由于隐式表面模型建模了三维点到表面的距离信息，而隐式表面模型的关键假设是只有与表面的第一个交点处的区域对渲染方程有贡献。我们可以较为方便地通过射线传播模型求解表面坐标$\mathbf{x}_s$\cite{niemeyer_differentiable_2020}。
+在混合隐式表达中，由于隐式表面模型建模了三维点到表面的距离信息，而隐式表面模型的关键假设是只有与表面的第一个交点处的区域对渲染方程有贡献。可以较为方便地通过射线传播模型求解表面坐标$\mathbf{x}_s$\cite{niemeyer_differentiable_2020}。
 
 UNISURF\cite{oechsle_unisurf_2021}在早期迭代期间，会使用类似NeRF中的粗采样策略在整个体积空间中随机采样。在后期的迭代中，样本点采样会更靠近估计的表面。由于可以通过求根法\cite{niemeyer_differentiable_2020}直接从占用场估计表面，因此无需像 NeRF 中那样进行分层两阶段采样。
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/unisurf-sampling.png}
     \caption{UNISURF\cite{oechsle_unisurf_2021}采样策略示意图}
@@ -398,30 +386,21 @@ VolSDF\cite{yariv_volume_2021}中给出了使用符号距离场估计的不透�
 
 图\ref{fig:related-work volsdf-sampling}展示了VolSDF采样的迭代过程，经过数次上采样后，网络可以以很少的采样点对不透明度进行准确的估计，使得误差在要求范围内。VolSDF得到的场景几何如图\ref{fig:related-work volsdf-result}所示，由图可见VolSDF可以产生比NeRF更加准确的场景几何。
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.7\textwidth]{undergraduate-thesis/images/volsdf-result.png}
     \caption{VolSDF\cite{yariv_volume_2021}的场景几何。}
     \label{fig:related-work volsdf-result}
 \end{figure}
 
-\subsubsection{基于Proposal网络的采样}
-Mip-NeRF\cite{barron_mip-nerf_2021}使用从粗到精的重采样策略，其中 MLP 使用“粗”射线间隔评估一次，然后使用“精细”射线间隔再次评估，并在两个级别上使用图像重建损失进行监督。而Mip-NeRF 360\cite{barron_mip-nerf_2022}中则在此基础上进行了改进，使用两个MLP：一个NeRF场景表示模型，以及一个Proposal网络，其中Proposal网络根据输入空间坐标预测体密度，被用来作为重采样的基准。
+% \subsubsection{基于Proposal网络的采样}
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=\textwidth]{undergraduate-thesis/images/mip-nerf360 proposal network.png}
-    \caption{Mip-NeRF 360\cite{barron_mip-nerf_2022} 结构示意图。}
-    \label{fig:related-work proposal network}
-\end{figure}
-
-如图\ref{fig:related-work proposal network}所示，Mip-NeRF 使用一个多尺度 MLP，该 MLP 被反复查询来获取权重，这些权重被重新采样到下一阶段的间隔中，并监督在所有尺度上生成的渲染。Mip-NeRF 360使用“Proposal MLP”，在渲染阶段，使用“NeRF MLP”来生成权重和颜色来渲染图像。Proposal MLP 被训练以产生与 NeRF MLP 的 w 输出一致的Proposal权重$\hat{w}$。通过使用小型Proposal MLP 和大型 NeRF MLP，Mip-NeRF 360获得了一个具有高容量且易于训练的组合模型。
 
 \subsubsection{基于Occupancy的网格采样}
 为了提升采样效率，InstantNGP\cite{muller_instant_2022}提出使用基于占用网格的采样：当沿着光线行进进行训练和渲染时，InstantNGP希望放置样本，使它们对图像的贡献尽量均匀，从而最大限度地减少计算浪费。因此，他们通过维护一个粗略标记空与非空空间的占用网格来集中表面附近的样本。
 
 \subsection{体渲染方法}
-混合隐式场景表示中，为了同时优化符号距离场和神经辐射场，通常需要将符号距离转换成体密度来进行体积渲染，然而这一映射过程并不唯一，在这一部分中，我们介绍两种比较常见的映射。
+混合隐式场景表示中，为了同时优化符号距离场和神经辐射场，通常需要将符号距离转换成体密度来进行体积渲染，然而这一映射过程并不唯一，在这一部分中，这里介绍两种比较常见的映射。
 
 \subsubsection{以VolSDF为代表的体渲染方法}
 在体积渲染过程中，体密度$\sigma(\mathbf{x})$是一个$\mathbb{R}^3\to\mathbb{R}_+$的隐式标量函数，其值表达了光在$\mathbf{x}$点被阻挡的概率密度，也表示了该点处物体粒子的密集程度。在VolSDF\cite{yariv_volume_2021}中，作者通过一个闭式函数将符号距离值映射为体密度：
@@ -431,7 +410,7 @@ Mip-NeRF\cite{barron_mip-nerf_2021}使用从粗到精的重采样策略，其中
 \end{equation}
 其中$\alpha,\beta$为超参数。
 
-直观地说，体密度$\sigma$ 模拟了一个具有恒定密度$\alpha$的均匀物体，它在物体边界附近平滑减小，其中平滑程度由$\beta$控制。在式\ref{eq: related-work volsdf equation}中定义密度的好处有两方面：首先，它为表面几何形状$\mathcal{M}$提供了有用的归纳偏置，并提供了重建表面的原则性方法，即作为$\text{d}\Omega$的零值面。其次，式中定义的密度的特定形式有助于限制渲染体积的不透明度（或等效的透明度）误差，这是体积渲染管线中的一个重要组成部分。在前面的章节中，我们探讨了$\beta$的大小对于重建误差$\varepsilon$的控制作用。
+直观地说，体密度$\sigma$ 模拟了一个具有恒定密度$\alpha$的均匀物体，它在物体边界附近平滑减小，其中平滑程度由$\beta$控制。在式\ref{eq: related-work volsdf equation}中定义密度的好处有两方面：首先，它为表面几何形状$\mathcal{M}$提供了有用的归纳偏置，并提供了重建表面的原则性方法，即作为$\text{d}\Omega$的零值面。其次，式中定义的密度的特定形式有助于限制渲染体积的不透明度（或等效的透明度）误差，这是体积渲染管线中的一个重要组成部分。前面的章节探讨了$\beta$的大小对于重建误差$\varepsilon$的控制作用。
 
 \subsubsection{以NeuS为代表的体渲染方法}
 然而，VolSDF所提出的经验性公式没有考虑到光线上点的先后关系，经过转换的体密度值在计算权重时也会出现偏差。NeuS\cite{wang_neus_2021}方法基于这样的观察，提出任何的转换函数$g$应满足的两个条件：
@@ -486,10 +465,7 @@ NeuralRGB-D 是第一个将深度输入用于混合隐式表达优化的工作\c
     \label{fig:related-work neural-rgbd formulation}
 \end{figure}
 
-我们将在第\ref{sec: related-work SDF optimization}节中介绍该方法的优化过程。通过引入深度监督，NeuralRGB-D可以获得可信的场景表面，通过混合隐式表征的加入，减弱形状-辐射二义性对于场景表示学习的影响。
-
-\subsection{真实世界的RGB-D对齐问题}
-
+本文将在第\ref{sec: related-work SDF optimization}节中介绍该方法的优化过程。通过引入深度监督，NeuralRGB-D可以获得可信的场景表面，通过混合隐式表征的加入，减弱形状-辐射二义性对于场景表示学习的影响。
 
 \subsection{优化混合隐式场景表示}
 当只需要优化神经辐射场时，大部分方法仅使用光度误差（公式\ref{eq: related-work photometric loss}）即可得到较好的优化结果，然而当我们组合不同的隐式场时，原先的单目标优化过程演变成为了一个多目标的优化过程，这对损失函数的设计带来了挑战，在本节中，我们介绍优化隐式场的几种常用损失函数。
@@ -538,7 +514,7 @@ $t_{tr}$为p点的归一化射线深度。
     \mathcal{L}_{dense-depth}=\sum_r\left(\log(\hat{s}(r)^2)+\frac{(\hat{D}(r)-D(r))^2}{\hat{s}(r)^2}\right)
 \end{equation}
 
-\subsection{小结}
+\noindent\textbf{小结：}
 
 \newpage
 \section{动态场景隐式重建}
@@ -546,7 +522,5 @@ $t_{tr}$为p点的归一化射线深度。
 \subsection{基于变形隐式场的动态场景重建}
 
 \subsection{基于多分支隐式表达的动态场景分解}
-
-\subsection{基于场景图的动态场景重建}
 
 \section{本章小结}

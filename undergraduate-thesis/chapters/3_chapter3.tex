@@ -7,9 +7,24 @@
 \section{简介}
 NeRF\cite{mildenhall_nerf_2020}将一个三维场景表示为一个隐式函数（如式\ref{eq:related-work radiance field}），其输入为五维坐标$(x,y,z,\theta,\phi)$，输出为RGB色值和体积渲染密度$\sigma$。对于任意一条光线$\mathbf{r}(t) = \mathbf{o} + t\cdot\mathbf{d}$上的$N$个采样点，其空间坐标被首先输入多层感知机网络来计算体密度$\sigma$，通过继续将观察角度输入后续的全连接层，可以获得该采样点的辐射颜色值。当获得了一条射线上$N$个采样点的辐射性质，我们可以用体积渲染公式（公式\ref{eq: related-work volume rendering}）获得最终渲染的像素颜色值。
 
-然而，仅通过神经辐射场的场景体积表示存在系统性的形状-辐射二义性\cite{zhang_nerf_2020}（第\ref{sec: related-work shape-radiance ambiguity}节），不能重建高质量的几何表面，因而在导出场景网格时效果较差。为了解决这一问题，现有工作主要从两方面解决这一问题。
+然而，仅通过神经辐射场的场景体积表示存在系统性的形状-辐射二义性\cite{zhang_nerf_2020}，不能重建高质量的几何表面，因而在导出场景网格时效果较差。
 
-其中一种方式是通过修改隐式场的内在结构，引入对场景几何结构更加敏感的符号距离场作为辐射场的前置组件，使用混合隐式场来构造场景表示。将符号距离场通过抽取符号距离函数$f_{SDF}(x)$的零值面来重建隐式表面。
+\subsection{形状-辐射二义性分析}
+
+为了进一步说明这种歧义，假设对于给定的场景，将几何体表示为一个单位球体。换句话说，将 NeRF 的不透明度场固定为在单位球体表面为 1，在其他地方为 0。然后，对于每个训练图像中的每个像素，将穿过该像素的光线与球体相交，并将交点处（以及沿光线方向）的辐射值定义为该像素的颜色。这个人工构造的解决方案是一个有效的 NeRF 重建，它完美地适合输入图像。
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/shape-radiance ambiguity.png}
+    \caption{形状-辐射二义性示意图\cite{zhang_nerf_2020}}
+    \label{fig:omni-nerf shape-radiance ambiguity}
+\end{figure}
+
+如图\ref{fig:omni-nerf shape-radiance ambiguity}所示，假设一个二维曲面$S^*$的形状为图中所示，相机$C_0, C_1$分别从不同角度观察曲面上一点，由图可以看出，如果网络实际学到的几何形状为图中$\hat{S}$所代表的单位圆，而将$C_0, C_1$观察到的颜色“贴”在单位圆上。这样即使网络学习到的几何与真实几何形状完全不同，也可以渲染出真实感的颜色。这种二义性被叫做“形状-辐射二义性”\cite{zhang_nerf_2020}，因而由辐射场建模的场景几何通常被认为是欠约束的。
+
+\subsection{解决方案}
+
+为了解决这一问题，现有工作主要从两方面解决这一问题。其中一种方式是通过修改隐式场的内在结构，引入对场景几何结构更加敏感的符号距离场作为辐射场的前置组件，使用混合隐式场来构造场景表示。将符号距离场通过抽取符号距离函数$f_{SDF}(x)$的零值面来重建隐式表面。
 
 另一种方式则是通过引入多元传感器信息输入作为额外监督信号。现有神经辐射场方法使用图片和其相机位姿作为网络输入，使用渲染颜色和真实观测颜色作为监督信号构建损失函数。通过反向传播损失函数值来优化多层感知机网络。注意到辐射场中的体积渲染方法同样可以用来计算累计深度值，为了改善该神经网络的表示精度，现有方法通过引入深度传感信息来构建额外的监督信号\cite{deng_depth-supervised_2022, roessle_dense_2022, azinovic_neural_2022}。
 
@@ -23,7 +38,7 @@ NeRF\cite{mildenhall_nerf_2020}将一个三维场景表示为一个隐式函数�
 \end{equation}
 其中$f_{TSDF}$为神经截断符号距离函数，这个映射将符号距离函数值映射为体积积分中的点权重，$\sigma$为任意选取的钟形单峰对称函数，这里使用$\mathtt{sigmoid}$函数。这个权重分配函数在一维上的可视化如图\ref{fig:omninerf-baseline-weighting}所示。
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/neural-rgbd weighting function.png}
     \caption{公式\ref{eq: omninerf-basedline-weighting}所计算的权重函数分布。}
@@ -101,7 +116,7 @@ NeRF\cite{mildenhall_nerf_2020}将一个三维场景表示为一个隐式函数�
 \section{场景表示实现}
 在前面几节中，我们基于两种现有方法中观察到的误差和二义性，在理论上提出了可以去除这两种误差的解决方案，在本节中，我们详细描述使用全方向距离-辐射混合隐式场的实现方案。
 
-我们在第\ref{chapter:related-work}章中介绍了现有的主流场景表示方法，其中，基于哈希体素网格的场景表示可以准确地建模场景细节但需要占据较大的存储空间，而基于多平面的张量分解场景表示在准确性上有所下降，但可以用更低的存储空间达到相媲美的效果。在本课题中，我们结合这两种不同的场景表示，使用一个较低分辨率的哈希体素网格建模场景细节，并使用一个更高分辨率的多平面作为辅助，以达到高效的准确场景地图骨干模型。我们的网络结构图如图\ref{fig:omninerf-scene-representation}所示。
+我们在第\ref{chapter:related-work}章中介绍了现有的主流场景表示方法，其中，基于哈希体素网格的场景表示可以准确地建模场景细节但需要占据较大的存储空间。这些表示主要由于图形硬件限制而难以扩展到更大的场景。体积数据必然比 2D 表面表示更大并在内存中占用更多空间。类似地，虽然相机光线最多与硬表面相交一次，但渲染穿过体积的光线可能需要许多样本。使用神经或混合表示时，每一个采样在计算或内存带宽方面的评估都非常昂贵。因此，这类方法只适用于范围有限的场景（空间中的单个对象或Forward-Facing的场景）的方法通常不会扩展到更大的无界场景。而基于多平面的张量分解场景表示在准确性上有所下降，但可以用更低的存储空间达到相媲美的效果。在本课题中，我们结合这两种不同的场景表示，使用一个较低分辨率的哈希体素网格建模场景细节，并使用一个更高分辨率的多平面作为辅助，以达到高效的准确场景地图骨干模型。我们的网络结构图如图\ref{fig:omninerf-scene-representation}所示。
 
 \begin{figure}[ht]
     \centering
@@ -133,7 +148,9 @@ $T, \pi^l$为随机大质数。
 \begin{equation}
     f(\mathbf{x}) = \mathtt{concat}\{f_{\mathcal{G}}, f_{XY}\otimes f_{XZ} \otimes f_{YZ}\},
 \end{equation}
-这里$\otimes$为Hadamard乘积\cite{fridovich-keil_k-planes_2023}
+这里$\otimes$为Hadamard乘积\cite{fridovich-keil_k-planes_2023}。
+
+为了鼓励空间平滑和连贯性，本文中使用的模型包含不同空间分辨率的多个副本，如： 64、128、256 和 512。每个尺度的模型都将被单独处理，来自不同尺度的特征向量被连接在一起，并传递给后续步骤。受 InstantNGP \cite{muller_instant_2022} 的多尺度哈希映射的启发，这种表示有效地编码了不同尺度的空间特征，使我们能够减少以最高分辨率存储的特征数量，从而进一步压缩我们的模型。
 
 通过参数解码器和激活函数，我们可以获得该点的无符号距离函数值：
 \begin{equation}
@@ -164,6 +181,19 @@ $T, \pi^l$为随机大质数。
     f_{Proposal}:\quad \mathbf{x}\to\hat{\sigma}(\mathbf{x})
 \end{equation}
 
+Mip-NeRF\cite{barron_mip-nerf_2021}使用从粗到精的重采样策略，其中 MLP 使用“粗”射线间隔评估一次，然后使用“精细”射线间隔再次评估，并在两个级别上使用图像重建损失进行监督。本文在此基础上进行了改进，使用两个MLP：一个NeRF场景表示模型，以及一个Proposal网络，其中Proposal网络根据输入空间坐标预测体密度，被用来作为重采样的基准。
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/mip-nerf360 proposal network.png}
+    \caption{Proposal网络结构示意图。}
+    \label{fig:related-work proposal network}
+\end{figure}
+
+如图\ref{fig:related-work proposal network}所示，Mip-NeRF 使用一个多尺度 MLP，该 MLP 被反复查询来获取权重，这些权重被重新采样到下一阶段的间隔中，并监督在所有尺度上生成的渲染。Mip-NeRF 360使用“Proposal MLP”，在渲染阶段，使用“NeRF MLP”来生成权重和颜色来渲染图像。Proposal MLP 被训练以产生与 NeRF MLP 的 w 输出一致的Proposal权重$\hat{w}$。通过使用小型Proposal MLP 和大型 NeRF MLP，Mip-NeRF 360获得了一个具有高容量且易于训练的组合模型。
+
+\subsubsection{重采样方法}
+
 我们会首先进行从相机原点$t_n$到假想无穷远点$t_f$的归一化空间中均匀采样：
 \begin{equation}
     s_i\sim\mathcal{U}\left[\frac{i-1}{N}, \frac{i}{N}\right],
@@ -191,6 +221,8 @@ $s_i\in(0,1]$为点的归一化深度，本课题中，我们通过下面的方�
     s^f_i &= \text{CDF}^{-1}(1/(i + 1))\\
     t^f_i &= g^{-1}(s^f_i\cdot g(t_f) + (1-s^f_i)\cdot g(t_n)
 \end{align}
+
+\subsubsection{基于知识蒸馏的Proposal网络优化}
 
 Proposal网络的训练需要通过从场景表达网络中蒸馏得到，注意到粗采样和精采样的采样区间并不一定相同，因而对蒸馏训练带来了一定的困难，本课题中使用覆盖损失函数的方式优化Proposal网络\cite{barron_mip-nerf_2022}。即对所有与查询区间$<t_{j}^f, t_{j+1}^f>$有交的粗采样区间，计算所有满足条件的粗采样区间权重的和。
 \begin{equation}

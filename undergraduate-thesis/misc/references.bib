@@ -1,4 +1,24 @@
 
+@misc{lin_componerf_2023,
+	title = {{CompoNeRF}: {Text}-guided {Multi}-object {Compositional} {NeRF} with {Editable} {3D} {Scene} {Layout}},
+	shorttitle = {{CompoNeRF}},
+	url = {http://arxiv.org/abs/2303.13843},
+	doi = {10.48550/arXiv.2303.13843},
+	abstract = {Recent research endeavors have shown that combining neural radiance fields (NeRFs) with pre-trained diffusion models holds great potential for text-to-3D generation.However, a hurdle is that they often encounter guidance collapse when rendering complex scenes from multi-object texts. Because the text-to-image diffusion models are inherently unconstrained, making them less competent to accurately associate object semantics with specific 3D structures. To address this issue, we propose a novel framework, dubbed CompoNeRF, that explicitly incorporates an editable 3D scene layout to provide effective guidance at the single object (i.e., local) and whole scene (i.e., global) levels. Firstly, we interpret the multi-object text as an editable 3D scene layout containing multiple local NeRFs associated with the object-specific 3D box coordinates and text prompt, which can be easily collected from users. Then, we introduce a global MLP to calibrate the compositional latent features from local NeRFs, which surprisingly improves the view consistency across different local NeRFs. Lastly, we apply the text guidance on global and local levels through their corresponding views to avoid guidance ambiguity. This way, our CompoNeRF allows for flexible scene editing and re-composition of trained local NeRFs into a new scene by manipulating the 3D layout or text prompt. Leveraging the open-source Stable Diffusion model, our CompoNeRF can generate faithful and editable text-to-3D results while opening a potential direction for text-guided multi-object composition via the editable 3D scene layout.},
+	urldate = {2023-05-08},
+	publisher = {arXiv},
+	author = {Lin, Yiqi and Bai, Haotian and Li, Sijia and Lu, Haonan and Lin, Xiaodong and Xiong, Hui and Wang, Lin},
+	month = mar,
+	year = {2023},
+	note = {arXiv:2303.13843 [cs]},
+	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition},
+}
+
+@misc{noauthor_being_nodate,
+	title = {Being {Friends} with {Floaters}: {Learning} {Radiance} {Fields} from {Hazy} {Images}},
+	keywords = {/unread},
+}
+
 @misc{bian_nope-nerf_2023,
 	title = {{NoPe}-{NeRF}: {Optimising} {Neural} {Radiance} {Field} with {No} {Pose} {Prior}},
 	shorttitle = {{NoPe}-{NeRF}},
@@ -454,21 +474,6 @@ titleTranslation:},
 	year = {2023},
 	note = {arXiv:2304.03384 [cs]},
 	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition, Computer Science - Robotics},
-}
-
-@misc{chen_dehazenerf_2023,
-	title = {{DehazeNeRF}: {Multiple} {Image} {Haze} {Removal} and {3D} {Shape} {Reconstruction} using {Neural} {Radiance} {Fields}},
-	shorttitle = {{DehazeNeRF}},
-	url = {http://arxiv.org/abs/2303.11364},
-	doi = {10.48550/arXiv.2303.11364},
-	abstract = {Neural radiance fields (NeRFs) have demonstrated state-of-the-art performance for 3D computer vision tasks, including novel view synthesis and 3D shape reconstruction. However, these methods fail in adverse weather conditions. To address this challenge, we introduce DehazeNeRF as a framework that robustly operates in hazy conditions. DehazeNeRF extends the volume rendering equation by adding physically realistic terms that model atmospheric scattering. By parameterizing these terms using suitable networks that match the physical properties, we introduce effective inductive biases, which, together with the proposed regularizations, allow DehazeNeRF to demonstrate successful multi-view haze removal, novel view synthesis, and 3D shape reconstruction where existing approaches fail.},
-	urldate = {2023-04-25},
-	publisher = {arXiv},
-	author = {Chen, Wei-Ting and Yifan, Wang and Kuo, Sy-Yen and Wetzstein, Gordon},
-	month = mar,
-	year = {2023},
-	note = {arXiv:2303.11364 [cs]},
-	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition},
 }
 
 @misc{li_dehazing-nerf_2023,
@@ -1068,35 +1073,6 @@ Version Number: 1},
 	month = apr,
 	year = {2023},
 	note = {arXiv:2304.06969 [cs]},
-	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition},
-}
-
-@misc{adamkiewicz_vision-only_2022,
-	title = {Vision-{Only} {Robot} {Navigation} in a {Neural} {Radiance} {World}},
-	url = {http://arxiv.org/abs/2110.00168},
-	doi = {10.48550/arXiv.2110.00168},
-	abstract = {Neural Radiance Fields (NeRFs) have recently emerged as a powerful paradigm for the representation of natural, complex 3D scenes. NeRFs represent continuous volumetric density and RGB values in a neural network, and generate photo-realistic images from unseen camera viewpoints through ray tracing. We propose an algorithm for navigating a robot through a 3D environment represented as a NeRF using only an on-board RGB camera for localization. We assume the NeRF for the scene has been pre-trained offline, and the robot's objective is to navigate through unoccupied space in the NeRF to reach a goal pose. We introduce a trajectory optimization algorithm that avoids collisions with high-density regions in the NeRF based on a discrete time version of differential flatness that is amenable to constraining the robot's full pose and control inputs. We also introduce an optimization based filtering method to estimate 6DoF pose and velocities for the robot in the NeRF given only an onboard RGB camera. We combine the trajectory planner with the pose filter in an online replanning loop to give a vision-based robot navigation pipeline. We present simulation results with a quadrotor robot navigating through a jungle gym environment, the inside of a church, and Stonehenge using only an RGB camera. We also demonstrate an omnidirectional ground robot navigating through the church, requiring it to reorient to fit through the narrow gap. Videos of this work can be found at https://mikh3x4.github.io/nerf-navigation/ .},
-	urldate = {2023-04-14},
-	publisher = {arXiv},
-	author = {Adamkiewicz, Michal and Chen, Timothy and Caccavale, Adam and Gardner, Rachel and Culbertson, Preston and Bohg, Jeannette and Schwager, Mac},
-	month = jan,
-	year = {2022},
-	note = {arXiv:2110.00168 [cs]},
-	keywords = {/unread, Computer Science - Robotics},
-}
-
-@misc{kong_vmap_2023,
-	title = {{vMAP}: {Vectorised} {Object} {Mapping} for {Neural} {Field} {SLAM}},
-	shorttitle = {{vMAP}},
-	url = {http://arxiv.org/abs/2302.01838},
-	doi = {10.48550/arXiv.2302.01838},
-	abstract = {We present vMAP, an object-level dense SLAM system using neural field representations. Each object is represented by a small MLP, enabling efficient, watertight object modelling without the need for 3D priors. As an RGB-D camera browses a scene with no prior information, vMAP detects object instances on-the-fly, and dynamically adds them to its map. Specifically, thanks to the power of vectorised training, vMAP can optimise as many as 50 individual objects in a single scene, with an extremely efficient training speed of 5Hz map update. We experimentally demonstrate significantly improved scene-level and object-level reconstruction quality compared to prior neural field SLAM systems. Project page: https://kxhit.github.io/vMAP.},
-	urldate = {2023-04-14},
-	publisher = {arXiv},
-	author = {Kong, Xin and Liu, Shikun and Taher, Marwan and Davison, Andrew J.},
-	month = mar,
-	year = {2023},
-	note = {arXiv:2302.01838 [cs]},
 	keywords = {/unread, Computer Science - Computer Vision and Pattern Recognition},
 }
 
