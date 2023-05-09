@@ -1,0 +1,36 @@
+\begin{table}[ht]
+\centering
+\resizebox{0.65\textwidth}{!}{%
+\begin{tabular}{lllll}
+\hline
+\multicolumn{1}{c}{\multirow{2}{*}{Method}} & \multicolumn{2}{c}{旋转 $(^\circ)$}    & \multicolumn{2}{c}{平移 $(m)$} \\ \cline{2-5} 
+\multicolumn{1}{c}{}      & 均值  & 中值 & 均值  & 中值 \\ \hline
+多层感知机                       & 26.62 & 17.53  & 8.23  & 7.5    \\
+参数网格              & 15.86 & 14.56  & 8.53  & 7.48   \\
+Ours (L=1)                & 24.24 & 12.99  & 9.2   & 8.01   \\
+Ours w/o 速度约束 & 12.96 & 11.21  & 19.95 & 12.28  \\
+Ours                                        & \textbf{11.36} & \textbf{11.17} & \textbf{6.29}  & \textbf{4.03}  \\ \hline
+\end{tabular}%
+}
+\caption{TPF消融实验的数值结构}
+\label{tab:ablation-network}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\resizebox{0.75\textwidth}{!}{%
+\begin{tabular}{lllllll}
+\hline
+\multicolumn{1}{c}{\multirow{2}{*}{Scene}} & \multicolumn{2}{c}{Ours} & \multicolumn{2}{c}{Mega-NeRF} & \multicolumn{2}{c}{Mega-NeRF-Depth} \\ \cline{2-7} 
+\multicolumn{1}{c}{} & PSNR    & RMSE    & PSNR    & RMSE    & PSNR    & RMSE    \\ \hline
+NY                   & 24.24   & 5.93    & 24.025  & 42.15   & 19.701  & 15.94   \\
+SF                   & 22.6985 & 7.26    & 19.9957 & 32.1686 & 19.0666 & 11.3864 \\
+Bridge               & 29.0644 & 26.55   & 27.9767 & 120.41  & 22.3456 & 96.16   \\
+Town                 & 25.315  & 15.61   & 24.6925 & 129.5   & 20.135  & 81.99   \\
+School               & 26.51   & 21.192  & 25.5729 & 63.1047 & 21.9129 & 42.74   \\
+Castle               & 28.2157 & 16.6617 & 28.0643 & 54.9895 & 23.23   & 38.8983 \\ \hline
+\end{tabular}%
+}
+\caption{是否使用后端位姿优化对性能的影响}
+\label{tab:ablation-mega-nerf-depth}
+\end{table}

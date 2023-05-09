@@ -1,0 +1,36 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table}[p]
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ccccccc}
+\hline
+场景    & \multicolumn{3}{c}{NY Simple}               & \multicolumn{3}{c}{NY Hard}                \\ \cline{2-7} 
+方法    & NeRF-W  & Mega-NeRF       & Ours            & NeRF-W & Mega-NeRF       & Ours            \\ \hline
+PSNR $\uparrow$  & 23.06   & 23.48           & \textbf{24.77}  & 22.88  & 23.09           & \textbf{23.99}  \\
+SSIM $\uparrow$  & 0.7946  & 0.8744          & \textbf{0.8469} & 0.7899 & 0.786           & \textbf{0.8162} \\
+LPIPS $\downarrow$ & 0.2318  & 0.1738          & \textbf{0.1661} & 0.2574 & 0.2339          & \textbf{0.2218} \\ \hline
+场景    & \multicolumn{3}{c}{NY Manual}               & \multicolumn{3}{c}{SF Simple}              \\ \cline{2-7} 
+方法    & NeRF-W  & Mega-NeRF       & Ours            & NeRF-W & Mega-NeRF       & Ours            \\ \hline
+PSNR $\uparrow$  & 22.88   & 24.03           & \textbf{24.24}  & 22.12  & 19.99           & \textbf{22.7}   \\
+SSIM $\uparrow$  & 0.7899  & \textbf{0.8522} & 0.8406          & 0.8297 & 0.8294          & \textbf{0.8336} \\
+LPIPS $\downarrow$ & 0.2574  & 0.1683          & \textbf{0.1621} & 0.2528 & 0.2252          & \textbf{0.2067} \\ \hline
+场景    & \multicolumn{3}{c}{SF Hard}                 & \multicolumn{3}{c}{SF Manual}              \\ \cline{2-7} 
+方法    & NeRF-W  & Mega-NeRF       & Ours            & NeRF-W & Mega-NeRF       & Ours            \\ \hline
+PSNR $\uparrow$  & 17.17   & 19.77           & \textbf{20.49}  & 18.33  & 21.83           & \textbf{23.24}  \\
+SSIM $\uparrow$  & 0.5564  & 0.7112          & \textbf{0.7164} & 0.5968 & 0.6596          & \textbf{0.8291} \\
+LPIPS $\downarrow$ & 0.4489  & \textbf{0.3302} & 0.3344          & 0.3878 & \textbf{0.2304} & 0.245           \\ \hline
+场景    & \multicolumn{3}{c}{Bridge}                  & \multicolumn{3}{c}{Town}                   \\ \cline{2-7} 
+方法    & NeRF-W  & Mega-NeRF       & Ours            & NeRF-W & Mega-NeRF       & Ours            \\ \hline
+PSNR $\uparrow$  & 26.79   & 27.98           & \textbf{29.06}  & 21.32  & 24.69           & \textbf{25.32}  \\
+SSIM $\uparrow$  & 0.8053  & 0.8674          & \textbf{0.8751} & 0.6208 & 0.7305          & \textbf{0.7675} \\
+LPIPS $\downarrow$ & 0.2438  & \textbf{0.1548} & 0.1952          & 0.4088 & 0.3103          & \textbf{0.2631} \\ \hline
+场景    & \multicolumn{3}{c}{School}                  & \multicolumn{3}{c}{Castle}                 \\ \cline{2-7} 
+方法    & NeRF-W  & Mega-NeRF       & Ours            & NeRF-W & Mega-NeRF       & Ours            \\ \hline
+PSNR $\uparrow$  & 19.69   & 25.57           & \textbf{26.51}  & 22.63  & 28.06           & \textbf{28.21}  \\
+SSIM $\uparrow$  & 0.5715  & 0.7739          & \textbf{0.7971} & 0.7443 & \textbf{0.9053} & 0.8976          \\
+LPIPS $\downarrow$ & 0.44527 & 0.3191          & \textbf{0.3175} & 0.2557 & 0.1159          & \textbf{0.1113} \\ \hline
+\end{tabular}%
+}
+\caption{在AUS数据集的重建结果的数值评估}
+\label{tab: aus-nvs-quant}
+\end{table}

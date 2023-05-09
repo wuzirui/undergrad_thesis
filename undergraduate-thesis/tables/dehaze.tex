@@ -1,0 +1,45 @@
+\begin{table}[ht]
+\centering
+\resizebox{0.75\textwidth}{!}{%
+\begin{tabular}{ccccc}
+\hline
+\textbf{数据集}                    & \textbf{方法}     & \textbf{PSNR} $\uparrow$  & \textbf{SSIM} $\uparrow$ & \textbf{LPIPS}  $\downarrow$\\ \hline
+\multirow{7}{*}{\textbf{合成数据集}} & NeRF w/ na\"ive dehaze & 12.65          & 0.53         & 0.38              \\
+                                    & DCP~\cite{kaiming_he_single_2009}                  & 8.03          & 0.50           & 0.50              \\
+                                    & AECRNet~\cite{wu_contrastive_2021}              & 13.62          & 0.63          & 0.50              \\
+                                    & FFA-Net~\cite{qin_ffa-net_2020}              & 6.79           & 0.43          & 0.47               \\
+                                    & gUNet~\cite{song_rethinking_2022}                & 7.74           & 0.50           & 0.41               \\
+                                    & Ours                 & \textbf{19.71} & \textbf{0.72} & \textbf{0.28}      \\ \hline
+\multirow{7}{*}{\textbf{真实世界数据集}}      & NeRF w/ na\"ive dehaze & 13.65          & 0.27          & 0.53               \\
+                                    & DCP~\cite{kaiming_he_single_2009}                  & 9.37           & 0.23          & 0.30               \\
+                                    & AECRNet~\cite{wu_contrastive_2021}              & 11.89          & 0.23          & 0.39               \\
+                                    & FFA-Net~\cite{qin_ffa-net_2020}              & 12.66          & 0.75          & 0.13               \\
+                                    & gUNet~\cite{song_rethinking_2022}                & 13.66          & \textbf{0.76}          & \textbf{0.13 }              \\
+                                    & Ours                 & \textbf{17.66}          & 0.48          & 0.38            \\ \hline
+\end{tabular}%
+}
+\caption{在去雾渲染上的定量指标。}
+\label{tab:exp-image-quality}
+\end{table}
+
+
+\begin{table}[ht]
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{crrrrrrr}
+\hline
+\textbf{Methods} &
+  \multicolumn{1}{c}{\textbf{RMSE} $\downarrow$} &
+  \multicolumn{1}{c}{\textbf{RMSE log} $\downarrow$} &
+  \multicolumn{1}{c}{\textbf{Abs Rel.} $\downarrow$} &
+  \multicolumn{1}{c}{\textbf{Sq Rel.} $\downarrow$} &
+  \multicolumn{1}{c}{\textbf{$\delta_1$} $\uparrow$} &
+  \multicolumn{1}{c}{\textbf{$\delta_2$} $\uparrow$} &
+  \multicolumn{1}{c}{\textbf{$\delta_3$} $\uparrow$} \\ \hline
+NeRF w/ na\"ive dehaze & 7.57 & 0.1129 & 0.0592 & 1.268  & 0.949 & 0.984 & 0.994 \\
+NeDDF~\cite{ueda_neural_2022}                                                           & 8.79 & 0.1281 & 0.0768 & 1.888  & 0.943 & 0.979 & 0.992 \\
+Ours                                                            & \textbf{2.71} & \textbf{0.0577} & \textbf{0.0249} & \textbf{0.1519} & \textbf{0.997} &\textbf{ 0.999} & \textbf{1}     \\ \hline
+\end{tabular}%
+}
+\caption{在深度预测上的定量指标。}
+\label{tab:exp-depth-est}
+\end{table}

@@ -1,4 +1,5 @@
 \chapter{真实大规模场景数据下的混合隐式场学习}
+\label{chapter: real-world data}
 \section{基于时间-位姿隐式场的多元传感信息配准}
 大规模场景的混合隐式表达对于真实场景中地图重建是自动驾驶、无人机运输等智能交通应用的下一代地图表征工具。然而对于大规模场景的多元传感数据的同步采集，现有的同步RGB-D相机因其可以感知到的深度范围及其有限，从而不能被直接应用，而使用不同步的RGB相机和深度传感器（激光雷达等）不可避免的需要解决其中的时钟同步问题。受近期的自动标定相机内外参数的的神经隐式场方法所启发，在本节中，我们提出了首个自动标定RGB相机和深度传感器间采样频率和偏置的解决方案。
 
@@ -78,6 +79,15 @@ Block-NeRF\cite{tancik_block-nerf_2022}和 Mega-NeRF\cite{turki_mega-nerf_2022} 
 \begin{equation}
     \mathcal{T}:\quad t_i\to\mathbf{T}_i=[x_i, q_i]
 \end{equation}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/time-pose function/Hash.pdf}
+    \caption{TPF的网络结构示意图。}
+    \label{fig:time-pose function structure}
+\end{figure}
+
+\subsubsection{TPF网络结构}
 
 我们将TPF函数用一个一维多分辨率哈希网格 $\{G^{(l)}\}_L^{l=1}$ 近似，输出的参数会用一个浅层多层感知机解码器$\mathcal{F}_\Theta$解码。哈希网格由 $L$ 级独立的特征网格组成。当为所有时间戳范围内的任意时间戳 $t_i$ 查询相机位姿 $\mathbf{T}_i$ 时，我们从每个网格层采样哈希编码并对提取的编码后通过二次插值并连接在一起以获得特征向量 $\mathcal{V}_i$。获得内插特征向量后，使用共享 MLP 处理特征 $\mathcal{V}_i$，然后将其输出馈送到两个分离的全连接层，以分别预测输出平移 $x_i$ 和旋转 $q_i$ 向量。网络前传过程可以用以下等式表示：
 \begin{align}
@@ -327,3 +337,4 @@ w_\text{D}(t) = \frac{\rho_\text{D}(t) \mathbf{w}_\text{RGB}(t)\text{d}t}{\int_0
 通过对采样点反投影到各个摄像机平面，并最小化射线深度和渲染颜色的协方差，我们可以最大程度地将视角相关颜色和雾天带来的随深度增加的颜色损失解耦。从而分离悬浮粒子和硬质的表面结构，最终实现从退化的雾天图片中优化准确场景表达这一问题。
 
 \section{本章小结}
+本章介绍了在真实世界退化传感输入数据下为了继续重建高精度混合隐式地图的两个方法。本章的上半部分介绍了在多元传感器时间不同步的情况下为了获得某一模态的准确位姿所提出的隐式时间-轨迹函数，以及在获取场景表示时的联合优化方法。后半部分介绍了在带雾等特殊天气下为了减小散射效应对隐式场学习影响所使用的技巧，这里本文提出对采样点权重重新计算，并使用协方差损失来最大化保留视角相关特性。

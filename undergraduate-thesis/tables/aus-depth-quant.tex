@@ -1,0 +1,43 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage{graphicx}
+\begin{table}[p]
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ccccccc}
+\hline
+场景                         & 方法        & RMSE $\downarrow$           & RMSE $\log\  \downarrow$       & $\delta_1\ \uparrow$            & $\delta_2\ \uparrow$            & $\delta_3\ \uparrow$            \\ \hline
+\multirow{3}{*}{NY Simple} & NeRF-W    & 16.74          & 0.2149          & 84.62\%          & 93.99\%          & 99.68\%          \\
+                           & Mega-NeRF & 19.74          & 0.2411          & 82.76\%          & 93.25\%          & 96.71\%          \\
+                           & Ours      & \textbf{5.5}   & \textbf{0.069}  & \textbf{97.78\%} & \textbf{99.39\%} & \textbf{99.85\%} \\ \hline
+\multirow{3}{*}{NY Hard}   & NeRF-W    & 9.97           & 0.2027          & 86.04\%          & 94.63\%          & 97.31\%          \\
+                           & Mega-NeRF & 10.07          & 0.2117          & 87.59\%          & 95.64\%          & 97.47\%          \\
+                           & Ours      & \textbf{7.03}  & \textbf{0.1672} & \textbf{94.91\%} & \textbf{97.21\%} & \textbf{98.33\%} \\ \hline
+\multirow{3}{*}{NY Manual} & NeRF-W    & 9.97           & 0.2027          & 86.04\%          & 94.63\%          & 97.31\%          \\
+                           & Mega-NeRF & 42.15          & 0.43            & 69.99\%          & 77.43\%          & 84.43\%          \\
+                           & Ours      & \textbf{5.93}  & \textbf{0.0085} & \textbf{91.85\%} & \textbf{98.08\%} & \textbf{99.48\%} \\ \hline
+\multirow{3}{*}{SF Simple} & NeRF-W    & 31.12          & 0.1988          & 86.14\%          & 90.59\%          & 98.17\%          \\
+                           & Mega-NeRF & 32.17          & 0.2188          & 86.38\%          & 92.12\%          & 95.04\%          \\
+                           & Ours      & \textbf{7.26}  & \textbf{0.0669} & \textbf{97.97\%} & \textbf{99.30\%} & \textbf{99.72\%} \\ \hline
+\multirow{3}{*}{SF Hard}   & NeRF-W    & 23.58          & 0.1429          & 81.14\%          & 91.36\%          & 96.34\%          \\
+                           & Mega-NeRF & 26.02          & 0.1666          & 86.20\%          & 94.92\%          & 96.45\%          \\
+                           & Ours      & \textbf{9.99}  & \textbf{0.0992} & \textbf{93.68\%} & \textbf{97.78\%} & \textbf{99.72\%} \\ \hline
+\multirow{3}{*}{SF Manual} & NeRF-W    & 20.09          & 0.2214          & 78.14\%          & 92.67\%          & 96.29\%          \\
+                           & Mega-NeRF & 12.48          & 0.1286          & 93.17\%          & 97.18\%          & 99.01\%          \\
+                           & Ours      & \textbf{5.66}  & \textbf{0.0706} & \textbf{97.37\%} & \textbf{99.31\%} & \textbf{99.67\%} \\ \hline
+\multirow{3}{*}{Bridge}    & NeRF-W    & 131.88         & 1.2277          & 53.76\%          & 61.57\%          & 58.98\%          \\
+                           & Mega-NeRF & 120.41         & 1.3246          & 69.10\%          & 72.54\%          & 73.17\%          \\
+                           & Ours      & \textbf{26.56} & \textbf{0.3248} & \textbf{93.24\%} & \textbf{96.32\%} & \textbf{98.26\%} \\ \hline
+\multirow{3}{*}{Town}      & NeRF-W    & 132.7          & 1.464           & 44.89\%          & 55.68\%          & 57.90\%          \\
+                           & Mega-NeRF & 129.5          & 1.424           & 54.54\%          & 59.18\%          & 57.90\%          \\
+                           & Ours      & \textbf{15.61} & \textbf{0.4632} & \textbf{91.92\%} & \textbf{96.89\%} & \textbf{98.49\%} \\ \hline
+\multirow{3}{*}{School}    & NeRF-W    & 88.83          & 0.9365          & 61.73\%          & 72.58\%          & 75.80\%          \\
+                           & Mega-NeRF & 63.1           & 0.7651          & 77.18\%          & 85.02\%          & 86.69\%          \\
+                           & Ours      & \textbf{21.19} & \textbf{0.2083} & \textbf{92.87\%} & \textbf{95.78\%} & \textbf{97.51\%} \\ \hline
+\multirow{3}{*}{Castle}    & NeRF-W    & 78.18          & 0.8651          & 75.72\%          & 79.26\%          & 81.11\%          \\
+                           & Mega-NeRF & 54.99          & 0.6167          & 79.69\%          & 83.59\%          & 87.43\%          \\
+                           & Ours      & \textbf{16.66} & \textbf{0.3565} & \textbf{93.12\%} & \textbf{97.23\%} & \textbf{98.45\%} \\ \hline
+\end{tabular}%
+}
+\caption{AUS数据集上的深度预测的数值评估结果}
+\label{tab:aus-depth-quant}
+\end{table}

@@ -1,0 +1,51 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table}[ht]
+\centering
+\resizebox{0.6\textwidth}{!}{%
+\begin{tabular}{llll}
+\hline
+方法             & PSNR $\uparrow$ & SSIM $\uparrow$ & LPIPS $\downarrow$ \\ \hline
+Ours           & \textbf{19.71}  & \textbf{0.72}   & \textbf{0.28}      \\
+Ours w/o 视角相关性 & 16.26           & 0.66            & 0.32               \\
+Ours w/o 协方差损失 & 14.43           & 0.63            & 0.36               \\
+Ours w/o 深度权重  & 12.62           & 0.54            & 0.46               \\
+DCP-NeRF       & 8.005           & 0.43            & 0.48               \\ \hline
+\end{tabular}%
+}
+\caption{去雾方法消融实验中渲染颜色相关定量指标评估}
+\label{tab:dehaze-ablation-rgb}
+\end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llllllll}
+\hline
+方法 &
+  RMSE $\downarrow$ &
+  RMSE log $\downarrow$ &
+  Abs. Rel $\downarrow$ &
+  Sq. Rel $\downarrow$ &
+  $\delta_1\ \uparrow$ &
+  $\delta_2\ \uparrow$ &
+  $\delta_3\ \uparrow$ \\ \hline
+Ours           & 2.71    & 0.0577 & 0.0249          & 0.1519  & 0.9966 & 0.9993 & 0.9995 \\
+Ours w/o 视角相关性 & 1.76    & 0.0445 & \textbf{0.0137} & 0.0734  & 0.9981 & 0.9990 & 0.9993 \\
+Ours w/o 协方差损失 &
+  \textbf{1.53} &
+  \textbf{0.0309} &
+  0.0139 &
+  \textbf{0.0563} &
+  \textbf{0.9991} &
+  \textbf{0.9994} &
+  \textbf{0.9996} \\
+Ours w/o 深度权重  & 32.3166 & 1.0395 & 0.6092          & 20.2141 & 0.0583 & 0.06   & 0.122  \\
+DCP-NeRF       & 40.2796 & 0.6245 & 0.6236          & 40.0531 & 0.1992 & 0.4275 & 0.6877 \\ \hline
+\end{tabular}%
+}
+\caption{去雾方法消融实验中深度预测相关定量指标评估}
+\label{tab:dehaze-ablation-depth}
+\end{table}

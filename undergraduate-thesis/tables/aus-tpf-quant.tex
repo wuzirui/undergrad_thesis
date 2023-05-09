@@ -1,0 +1,22 @@
+\begin{table}[ht]
+\centering
+\resizebox{0.75\textwidth}{!}{%
+\begin{tabular}{lllll}
+\hline
+\multicolumn{1}{c}{\multirow{2}{*}{场景}} & \multicolumn{2}{c}{TPF} & \multicolumn{2}{c}{位姿优化} \\ \cline{2-5} 
+\multicolumn{1}{c}{} & 旋转 $(^\circ)$    & 平移 $(m)$    & 旋转    $(^\circ)$   & 平移  $(m)$    \\ \hline
+NY Simple            & 0.6601 & 1.84   & 0.1336 & 0.3394 \\
+NY Hard              & 0.5908 & 1.12   & 0.089  & 0.5644 \\
+NY Manual            & 3.698  & 0.4605 & 1.474  & 0.1997 \\
+SF Simple            & 0.17   & 1.338  & 0.0465 & 0.3193 \\
+SF Hard              & 0.6656 & 1.4488 & 0.4064 & 1.088  \\
+SF Manual            & 0.6539 & 0.9393 & 0.0191 & 0.6632 \\
+Bridge               & 1.5108 & 0.9514 & 0.4893 & 0.5709 \\
+Town                 & 0.6774 & 1.346  & 0.3633 & 0.8463 \\
+School               & 0.7031 & 0.878  & 0.6807 & 0.56   \\
+Castle               & 1.0525 & 0.3772 & 0.3822 & 0.12   \\ \hline
+\end{tabular}%
+}
+\caption{AUS上使用TPF预测位姿的误差和经过联合优化后的误差}
+\label{tab:aus-tpf-quant}
+\end{table}
