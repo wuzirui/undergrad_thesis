@@ -40,19 +40,6 @@
 
 为此，我们提出使用一种新型的时间-位姿隐函数（Time-Pose Function, TPF）对此先验进行建模，TPF将时间戳映射到六自由度相机位姿。就像神经符号距离场或辐射场中对具有 3D/5D 输入的函数进行逼近的方式一样， TPF逼近一个将 1D 时间戳作为输入并输出 SE(3) 流形\cite{sola_micro_2021}中的变换的函数。换句话说，这个TPF也是一个隐式场。我们将它与前文提到的混合隐式地图结合起来，形成如图\ref{fig:time-pose function main figure} 所示的级联架构。因此，在该框架下进行优化可以同时构建用于建图的城市规模混合隐式场，并校准 RGB-D 帧之间的不匹配问题。
 
-\subsection{相关工作概要}
-\textbf{神经隐式表达：}
-通过每个圆锥太体覆盖的体积的集成位置编码 (IPE) 表示，MipNeRF\cite{barron_mip-nerf_2021}有效地渲染视锥（而不是射线），从而减少了混叠的伪影现象。 NeRF++\cite{zhang_nerf_2020}分别对前景和背景表示进行建模，并分别进行采样，以应对无界 3D 场景建模的挑战。 NeRF-W\cite{martin-brualla_nerf_2021}引入了外观和瞬态编码来弥补受可变光照或瞬态遮挡物影响的弱点。 InstantNGP\cite{muller_instant_2022} 采用具有可训练特征向量的多分辨率哈希表，使 NeRF 能够学习高质量的神经图形基元。
-
-Block-NeRF\cite{tancik_block-nerf_2022}和 Mega-NeRF\cite{turki_mega-nerf_2022} 在空间上将场景分解为单独训练的 NeRF，使场景表示能够扩展到任意大的环境。 Bungee-NeRF\cite{xiangli_bungeenerf_2022}使用多尺度数据模型，在该模型中，可以在卫星级别的截然不同的尺度上观察到图像的变化。通过引入 LiDAR 和天空建模并补偿不同的曝光，城市辐射场\cite{rematas_urban_2022}扩展了 NeRF 模型以产生令人印象深刻的 3D 表面重建并在室外环境中合成高质量的新颖视图。
-
-此外，借助多视图立体几何\cite{deng_depth-supervised_2022} 或深度先验信息\cite{roessle_dense_2022} 的密集深度监督，NeRF 在新颖的视图合成和深度预测方面取得了惊人的成果，但难以扩展到大规模户外场景.
-
-\textbf{相机标定：}
-当前有多种 SLAM 系统通过联合估计相机参数和 3D 几何形状来重建场景。 ORB-SLAM\cite{mur-artal_orb-slam_2015}通过关联特征对应关系实时重建场景和估计相机位姿。 SfM（Structure-from-Motion，运动恢复结构） 系统\cite{schonberger_structure--motion_2016, chen_uncertainty-driven_2023} 能够同时校准内部和外部相机参数并重建场景。 相机-雷达混合SLAM\cite{kong_vmap_2023, deng_nerf-loam_2023} 对齐相机中心周围单位球体中的点和视觉特征之间的对应关系，从而提高了位姿估计精度并减少标定时间。
-
-随着基于 NeRF 的 3D 场景重建和渲染研究的蓬勃发展，最近的工作估计了 NeRF 之上的相机参数。给定一个经过训练的 NeRF 模型，iNeRF\cite{yen-chen_inerf_2021} 能够根据观察到的图像和来自 NeRF 模型的渲染图像之间的光度损失，执行无网格、仅 RGB 的 6-DOF 位姿估计。由于 RGB 和深度的时间一致性，iMAP\cite{sucar_imap_2021} 和 NICE-SLAM\cite{zhu_nice-slam_2022} 在房间内实时进行高保真重建和位姿估计方面取得了显著成果。 Martin-Brualla 等人提出了结合 TSDF 和辐射场的混合隐式场\cite{azinovic_neural_2022}，在优化相机位姿的同时提高了外观和几何形状的整体重建质量。与基于 NeRF 的方法不同，NeRFmm \cite{wang_nerf--_2022}，NopeNeRF\cite{bian_nope-nerf_2022} 和 SCNeRF \cite{jeong_self-calibrating_2021} 在训练中联合优化相机位姿和内在函数。 NeRFmm\cite{wang_nerf--_2022}只能用于前向场景。 SCNeRF\cite{jeong_self-calibrating_2021} 适用于具有任意非线性失真的通用相机。两者都不能扩展到大规模场景，不适用于本文中RGB-D错配场景的设置。
-
 
 \subsection{研究动机与问题描述}
 问题。我们的目标是像 Mega-NeRF\cite{turki_mega-nerf_2022} 或 BungeeNeRF\cite{xiangli_bungeenerf_2022} 等先前工作中所做的那样，学习用于大规模场景表示的神经隐式场，这对于城市规划或机器人模拟等新兴应用至关重要。然而，这些先前的工作未能利用激光雷达等深度传感器捕获的几何信息。该问题现在已经收到了研究社区较大的关注\cite{deng_depth-supervised_2022,roessle_dense_2022}，因为它可用于训练具有快速收敛性的无漂浮物 NeRF。为此，我们想解决在训练大规模隐式场时使用深度监督的问题。
@@ -87,7 +74,7 @@ Block-NeRF\cite{tancik_block-nerf_2022}和 Mega-NeRF\cite{turki_mega-nerf_2022} 
     \label{fig:time-pose function structure}
 \end{figure}
 
-\subsubsection{TPF网络结构}
+\subsubsection{隐式TPF网络模型实现}
 
 我们将TPF函数用一个一维多分辨率哈希网格 $\{G^{(l)}\}_L^{l=1}$ 近似，输出的参数会用一个浅层多层感知机解码器$\mathcal{F}_\Theta$解码。哈希网格由 $L$ 级独立的特征网格组成。当为所有时间戳范围内的任意时间戳 $t_i$ 查询相机位姿 $\mathbf{T}_i$ 时，我们从每个网格层采样哈希编码并对提取的编码后通过二次插值并连接在一起以获得特征向量 $\mathcal{V}_i$。获得内插特征向量后，使用共享 MLP 处理特征 $\mathcal{V}_i$，然后将其输出馈送到两个分离的全连接层，以分别预测输出平移 $x_i$ 和旋转 $q_i$ 向量。网络前传过程可以用以下等式表示：
 \begin{align}
@@ -157,14 +144,6 @@ Block-NeRF\cite{tancik_block-nerf_2022}和 Mega-NeRF\cite{turki_mega-nerf_2022} 
 
 通过分析辐射场内自然学习到的密度分布，我们首先深入探讨了漂浮物如何影响体积渲染过程的问题。从几何学上讲，漂浮物会导致地表前方的密度非零，因此渲染的深度图像会出现偏差，而从光度方面来看，由于传输依赖于深度，在不同距离观察朦胧场景可能会导致不同的结果即使场景辐射场与视图无关，视点之间的退化行为同样如此。这种有偏见的深度推理和模棱两可的视图依赖性导致辐射场的学习难以处理。为了解决这些问题，我们提出了一种改进的深度图细化平均权重。就视图依赖性歧义而言，我们引入了一个基于协方差的正则化项，以减小辐射和雾霾引起的辐照度衰减之间的强耦合。这些方式保证了无雾场景表示的准确恢复以及漂浮物的浓度控制。
 
-\subsection{相关工作概要}
-现有图像去雾方法大致可以分为三类：基于先验的方法、基于学习的方法和散射介质中的三维重建。
-\begin{enumerate}
-    \item \textbf{基于先验信息的去雾方法}。基于先验的方法依赖于物理散射模型，通过使用启发式先验来估计和去除雾霾，这些先验包括对比度最大化先验、暗通道先验、颜色衰减先验、强度框先验和非局部先验 \cite{kaiming_he_single_2009, nishino_bayesian_2012, fattal_dehazing_2015, wu_contrastive_2021}。虽然这些方法产生了视觉上逼真的结果，但所采用的先验仅限于特定场景。例如，当图像中没有天空区域时，之前的暗通道方法表现不佳\cite{kaiming_he_single_2009}，因为它依赖于该区域的 RGB 值来估计大气光。此外，由于先验是在图像域中指定的，因此可能无法完全保证多视图一致性。
-    \item \textbf{基于学习的去雾方法}。这种类型的早期工作\cite{cai_dehazenet_2016, fujimura_dehazing_2021, dong_multi-scale_2020, li_aod-net_2017, liu_griddehazenet_2019, qin_ffa-net_2020, qu_enhanced_2019, ren_gated_2018, ren_single_2020, zhang_densely_2018}建立在物理散射模型的基础上，并学习恢复模型中的传输图、大气光和其他变量。然而，物理散射模型对学习变量高度敏感，其中小的扰动可能导致输出图像中出现明显的伪影。最近的趋势\cite{song_vision_2022, liu_griddehazenet_2019, chen_gated_2019, deng_hardgan_2020, dong_multi-scale_2020, qin_ffa-net_2020, wu_contrastive_2021, wang_eaa-net_2021} 以端到端的方式模拟了模糊到清晰的图像转换。例如，AECR-Net \cite{wu_contrastive_2021} 在包含同一场景的成对模糊和非模糊图像的数据集上进行训练。然而，这些模型可能无法推广到分布外的数据。
-    \item \textbf{散射介质三维重建}。散射介质中的 3D 重建与所提出的方法共享相似的多视图设置。他们的目标是根据从不同视点拍摄的同一朦胧场景的多张图像重建 3D 场景。然而，这些方法依赖于主动光源\cite{murez_photometric_2017, narasimhan_structured_2005, fujimura_photometric_2018, tsiotsios_backscatter_2014}、额外的感官数据，例如深度传感器或激光器\cite{caraffa_stereo_2013, li_simultaneous_2015, heide_imaging_2014, satat_towards_2018, wang_programmable_2018}。这种最近的方法\cite{fujimura_dehazing_2021, caraffa_stereo_2013, song_deep_2019, li_simultaneous_2015}依靠基于学习的技术从图像和稀疏点云中提取特征，并使用它们进行多视图立体以恢复密集的几何表示。相反，我们仅使用来自多视图的模糊图像直接恢复场景辐射度和几何形状。
-\end{enumerate}
-
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/dehazing-nerf/t-haze.pdf}
@@ -172,7 +151,7 @@ Block-NeRF\cite{tancik_block-nerf_2022}和 Mega-NeRF\cite{turki_mega-nerf_2022} 
     \label{fig:dehazing-nerf t-haze decomposition}
 \end{figure}
 
-\subsection{散射介质的理论模型}
+\subsection{散射介质的理论模型分析}
 为什么使用 NeRF 去雾是一个自然合理的选择？我们首先证明体积渲染公式可以重新分解为DCP\cite{kaiming_he_single_2009}中广泛使用的薄雾方程。在有雾的场景中，公式可以分为两部分，分别对雾霾（图\ref{fig:dehazing-nerf t-haze decomposition}中的红色部分）和硬质结构（图\ref{fig:dehazing-nerf t-haze decomposition}中的蓝色部分）进行积分。假设$t_{haze}$（在图\ref{fig:dehazing-nerf t-haze decomposition}中）表示相机原点与采样光线与硬质结构的交点之间的距离，即雾度的深度。通过从硬质结构部分移出常数项 $T_{haze} = T(t_{haze})$，体渲染公式可以进一步解释为：
 \begin{align}
     \textbf{c}(\textbf{r}) &= \int_{t_n}^{t_{haze}}T(t)\sigma(t)c(t)\text{d}t + T_{haze}\int_{t_{haze}}^{t_f}T'(t)\sigma(t)c(t)\text{d}t\\
@@ -211,7 +190,7 @@ Block-NeRF\cite{tancik_block-nerf_2022}和 Mega-NeRF\cite{turki_mega-nerf_2022} 
     \label{fig:dehazing-nerf taxonomy}
 \end{figure}
 
-\subsection{深度权重函数}
+\subsection{建立忽略散射效应的深度权重函数}
 在清晰、无雾的图像上训练的 NeRF 网络的体积密度输出遵循一种模式，即在表面位置附近取大值，在相机原点和表面之间取接近于零的值。这种模式在物理上是合理的，并已被许多作品使用，例如 NeuS \cite{wang_neus_2021}，NeuralRGb-D\cite{azinovic_neural_2022} 和深度监督 NeRF\cite{deng_depth-supervised_2022}。这种模式允许方程式中的 NeRF 渲染权重 $w_{RGB}$， 在除表面附近以外的所有位置都取接近于零的值，渲染深度 $D$ 以准确地近似表面深度。
 
 然而，这种模式不再适用于雾天的场景。空气中悬浮粒子的体积密度不为零，可以取任意值。如果仍然使用普通体渲染公式，雾霾位置的权重会明显大于清晰场景中的权重，从而使渲染深度产生偏差。因此，需要针对有雾场景的深度权重设计一个深度权重函数。这对于确保准确的深度估计和高质量的去雾结果是必要的。通过将表面深度定义为：

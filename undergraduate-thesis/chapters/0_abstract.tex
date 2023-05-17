@@ -20,18 +20,30 @@
 % 中英文摘要章节
 \begin{abstract}
 % 中文摘要正文从这里开始
-本文……。
 
-\textcolor{blue}{摘要正文选用模板中的样式所定义的“正文”，每段落首行缩进 2 个字符；或者手动设置成每段落首行缩进 2 个汉字，字体：宋体，字号：小四，行距：固定值 22 磅，间距：段前、段后均为 0 行。阅后删除此段。}
+三维场景重建在三维计算机视觉和机器人领域发挥着重要作用。近年来，出现了大量自动驾驶公司，旨在用计算机算法取代人类驾驶员，同时确保驾驶安全。然而，自动驾驶算法的实施并不总是顺利的，这些算法的安全性已经成为学术界和工业界日益关注的问题。为了提高自动驾驶算法的安全性，研究人员正在努力实现从真实到模拟再到真实的数据循环，这一过程被称为Real2Sim2Real。在此背景下，本文重点解决其中的第一步，即Real2Sim场景图三维重建。为了从传感器观测数据中重建高质量的三维场景，本文使用近年来快速发展的混合神经隐式场景表征，对多元传感器信息进行融合来学习场景表征模型。本文的主要贡献和创新点包括：
+\begin{enumerate}
+    \item 结合不同种类的隐式场，基于多传感器输入数据建立混合距离-辐射场，用于理想传感器输入时的场景外观和几何的高精度建模；
+    \item 观察到真实场景中获取的传感器数据会出现退化的情形。本文可以从异步RGBD序列中训练神经辐射场，首次提出从雾状图像中学习神经隐式场，精确解耦场景结构和悬浮粒子，并利用雾状图像深度信息作为RGB图像的补充，从而实现高质量的隐式场景表示学习和灵活的散射效果控制，使得即使在退化传感信息输入的条件下也可以达到近似理想状态下的建模效果；
+    \item 从RGB-D真实数据中学习混合隐式场景图，实现对动态场景的理解和编辑，促进自动驾驶Real2Sim2Real的技术发展；
+    \item 在公共数据集和模拟和真实场景中的各种退化场景上进行广泛的实验和比较，以验证所提出方法的有效性。
+\end{enumerate}
 
-\textcolor{blue}{摘要是一篇具有独立性和完整性的短文，应概括而扼要地反映出本论文的主要内容。包括研究目的、研究方法、研究结果和结论等，特别要突出研究结果和结论。中文摘要力求语言精炼准确，本科生毕业设计（论文）摘要建议 300-500 字。摘要中不可出现参考文献、图、表、化学结构式、非公知公用的符号和术语。英文摘要与中文摘要的内容应一致。阅后删除此段。}
+
 
 \end{abstract}
 
 % 英文摘要章节
 \begin{abstractEn}
 % 英文摘要正文从这里开始
-In order to study……
+Three-dimensional scene reconstruction plays a significant role in the fields of 3D computer vision and robotics. In recent years, a large number of autonomous driving companies have emerged, aiming to replace human drivers with computer algorithms while ensuring driving safety. However, the implementation of autonomous driving algorithms is not always smooth, and the safety of these algorithms has become a growing concern in both academia and industry. In this context, this thesis focuses on the first step of the Real2Sim2Real process, namely the Real2Sim scene map 3D reconstruction. To reconstruct high-quality 3D scenes from sensor observation data, this paper uses the rapidly developing hybrid neural implicit scene representation to merge multi-sensor information for learning scene representation models. The main contributions and innovations of this thesis include:
 
-\textcolor{blue}{Abstract 正文设置成每段落首行缩进 2 字符，字体：Times New Roman，字号：小四，行距：固定值 22 磅，间距：段前、段后均为 0 行。阅后删除此段。}
+\begin{enumerate}
+    \item Combining different types of implicit fields and establishing a hybrid distance-radiance field based on multi-sensor input data for high-precision modeling of scene appearance and geometry under ideal sensor input conditions;
+    \item Observing that sensor data obtained in real scenarios may be degraded. This thesis can train neural radiance fields from asynchronous RGBD sequences and proposes to learn neural implicit fields from foggy images for the first time, accurately decoupling scene structure and suspended particles, and using foggy image depth information as a supplement to RGB images, thus achieving high-quality implicit scene representation learning and flexible scattering effect control, enabling modeling results to approach ideal conditions even under degraded sensor information input;
+    \item Learning hybrid implicit scene graphs from RGB-D real data, realizing the understanding and editing of dynamic scenes, and promoting the technological development of autonomous driving Real2Sim2Real;
+    \item Conducting extensive experiments and comparisons on public datasets and various degraded scenarios in simulation and real scenes to verify the effectiveness of the proposed methods.
+\end{enumerate}
+
+
 \end{abstractEn}

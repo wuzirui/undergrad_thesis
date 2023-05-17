@@ -56,6 +56,14 @@ KITTI数据集中提供了场景中动态物体的边界框位姿，如图\ref{f
 
 在真实场景中，RGB 相机和 LiDAR 通常不会对齐，因此我们在模拟器中以高频率（50fps）对原始 RGB-D 序列进行采样，并使用不同的起始帧对其进行重新采样，以获得逼真的异步 RGB-D 序列.为了进一步增加真实性，我们向固定偏移量添加了随机扰动。采样方法如图\ref{fig:exp-aus-offset}所示。
 
+如图\ref{fig:exp-rgbd-alignment}所示，RGB相机和深度相机在一次飞行中覆盖了几乎相同的轨迹，因此轨迹先验可以在RGB序列中隐式学习，并可以直接转换为预测深度相机位姿。
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/time-pose function/RGBD_alignment.pdf}
+    \caption{RGB和深度序列轨迹的可视化演示。}
+    \label{fig:exp-rgbd-alignment}
+\end{figure}
+
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/experiments/offset.pdf}
@@ -216,7 +224,7 @@ Ours         & \textbf{29.01} & \textbf{0.077} & \textbf{0.882} & \textbf{0.929}
 \input{undergraduate-thesis/tables/dehaze}
 
 \subsubsection{散射效应操控}
-为了展示对散射效应的操控，本文对一个训练好的带雾场景中的悬浮粒子性质进行编辑，展示了对雾浓度的改变、雾颜色的调整等多个不同的实验结果，如图\ref{fig:dehazenerf-manipulation}所示。
+为了展示对散射效应的操控，本文对一个训练好的带雾场景中的悬浮粒子性质进行编辑，展示了对雾浓度的改变、雾颜色的调整等多个不同的实验结果，如图\ref{fig:dehazenerf-manipulation}所示。本文的附录中列出了对雾属性进行操控的算法流程图。
 
 \begin{figure}[ht]
     \centering

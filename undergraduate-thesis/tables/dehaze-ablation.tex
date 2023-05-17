@@ -49,3 +49,46 @@ DCP-NeRF       & 40.2796 & 0.6245 & 0.6236          & 40.0531 & 0.1992 & 0.4275 
 \caption{去雾方法消融实验中深度预测相关定量指标评估}
 \label{tab:dehaze-ablation-depth}
 \end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table*}[ht]
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{cc|cccccccccc}
+\hline
+\textbf{thresh} &
+  \textbf{p} &
+  \textbf{PSNR} &
+  \textbf{SSIM} &
+  \textbf{LPIPS} &
+  \textbf{RMSE} &
+  \textbf{RMSE log} &
+  \textbf{Sq. Rel} &
+  \textbf{Abs. Rel} &
+  \textbf{$\delta_1$} &
+  \textbf{$\delta_2$} &
+  \textbf{$\delta_3$} \\ \hline
+100 & 4           & 19.626          & 0.7211 & 0.2835 & 2.3631  & 0.0517 & 0.1177 & 0.0240 & 0.9973 & 0.9994 & \textbf{0.9996} \\
+200 & 4           & 19.657          & 0.7206 & 0.2838 & 2.6717  & 0.0567 & 0.1472 & 0.0249 & 0.9967 & 0.9994 & 0.9995          \\
+300 & 4           & \textbf{19.664} & 0.7208 & 0.2836 & 2.7275  & 0.0584 & 0.1531 & 0.0248 & 0.9964 & 0.9993 & 0.9994          \\
+400 & 4           & 19.658          & 0.7210 & 0.2828 & 2.6919  & 0.0611 & 0.1503 & 0.0240 & 0.9964 & 0.9991 & 0.9993          \\
+256 & $\sqrt{2}$  & 16.003          & 0.6662 & 0.3298 & 11.6805 & 0.2512 & 2.5377 & 0.1930 & 0.4199 & 0.9672 & 0.9970          \\
+256 & $\sqrt{4}$  & 18.818          & 0.7159 & 0.2835 & 3.0478  & 0.0605 & 0.1889 & 0.0411 & 0.9864 & 0.9990 & 0.9995          \\
+256 &
+  $\sqrt{8}$ &
+  19.566 &
+  \textbf{0.7230} &
+  \textbf{0.2786} &
+  \textbf{1.9347} &
+  \textbf{0.0378} &
+  \textbf{0.0798} &
+  \textbf{0.0190} &
+  \textbf{0.9979} &
+  \textbf{0.9994} &
+  0.9995 \\
+256 & $\sqrt{32}$ & 19.645          & 0.7195 & 0.2844 & 3.0540  & 0.0878 & 0.1935 & 0.0265 & 0.9955 & 0.9983 & 0.9985          \\ \hline
+\end{tabular}%
+}
+\caption{在参数thresh和p上选择不同组合对实验结果的影响}
+\label{tab:ablation-config}
+\end{table*}

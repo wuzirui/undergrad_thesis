@@ -75,9 +75,9 @@
 
 \section{国内外研究现状}
 
-神经辐射场(Neural Radiance Fields, NeRF)\cite{mildenhall_nerf_2020}最早被用于从已观测到的视角图片中学习场景信息，并渲染新视角下的图片，这类方法可以渲染高逼真的RGB图片。神经辐射场建立在一个简化的物理光照模型上：任意三维空间中的点均会向外散射不同颜色的光，从不同视角观察空间中的同一点的颜色可能不同，且每个点都会对其他方向传播过来的光线具有阻碍传播的作用。对三维点$P_i (x,y,z)$和观察角度$V(\theta,\phi)$，点$P_i$在角度V下观察到的颜色可以被一个五维连续隐式函数$f_{NeRF}:(x,y,z,\theta,\phi)\to (c_i,\sigma_i),c_i\in[0,255]^3,\sigma_i\in \mathbb{R}$ 建模，其中$c_i$为$P_i$散射出的RGB颜色值，而$\sigma_i$为该点的体密度。通过加权累积一条光线上所穿过点的辐射值，可以达到照片级的渲染，并且由于渲染过程的天然可微性，可以用渲染图片和观察到的图片之间的误差更新隐式函数$f_{NeRF}$。虽然神经辐射场可以精准地学习场景的视觉特征，然而仅从图片渲染误差中学习到的场景几何是缺乏约束的。因此，以神经辐射场为代表的方法在场景几何学习的深度估计等任务的精度要求上（如RMSE等指标）上的效果不足以支持“真实$\rightarrow$仿真$\rightarrow$真实”的任务要求，即将从视觉感知获得的几何表示应用于真实场景机器人实践应用(Real2Sim2Real)等更广泛的机器人应用。
+神经辐射场(Neural Radiance Fields, NeRF)\cite{mildenhall_nerf_2020}最早被用于从已观测到的视角图片中学习场景信息，并渲染新视角下的图片，这类方法可以渲染高逼真的RGB图片。神经辐射场建立在一个简化的物理光照模型上：任意三维空间中的点均会向外散射不同颜色的光，从不同视角观察空间中的同一点的颜色可能不同，且每个点都会对其他方向传播过来的光线具有阻碍传播的作用。对三维点$P_i (x,y,z)$和观察角度$V(\theta,\phi)$，点$P_i$在角度V下观察到的颜色可以被一个五维连续隐式函数$f_{NeRF}:(x,y,z,\theta,\phi)\to (c_i,\sigma_i),c_i\in[0,255]^3,\sigma_i\in \mathbb{R}$ 建模，其中$c_i$为$P_i$散射出的RGB颜色值，而$\sigma_i$为该点的体密度。通过加权累积一条光线上所穿过点的辐射值，可以达到照片级的渲染，并且由于渲染过程的天然可微性，可以用渲染图片和观察到的图片之间的误差更新隐式函数$f_{NeRF}$。虽然神经辐射场可以精准地学习场景的视觉特征，然而仅从图片渲染误差中学习到的场景几何是缺乏约束的。因此，以神经辐射场为代表的方法在场景几何学习的深度估计等任务的精度要求上（如RMSE等指标）上的效果不足以支持Real2Sim2Real的更广泛的机器人应用。
 
-在最初的神经辐射场中，研究者使用多层感知机(Multi-layer Perceptrons, MLP)来建模隐函数$f_{NeRF}$，在MonoSDF\cite{yu_monosdf_2022}， InstantNGP\cite{muller_instant_2022}等后续工作中提出使用MLP来建模该函数关系存在训练/渲染时间过长、建模能力差和遗忘等问题，并提出使用三维空间网格代替感知机学习隐函数表征。但使用三维网格建模场景信息存在模型体积大，无法泛化到大场景的问题，因此后续工作\cite{chen_tensorf_2022, fridovich-keil_k-planes_2023, cao_hexplane_2023, reiser_merf_2023}提出使用张量分解\cite{kolda_tensor_2009}的思想将三维张量分解为多个二维矩阵，从而将场景模型的空间复杂度从$\mathcal O (L^3)$降为$\mathcal O (L^2)$。本文总结现有隐式场表示的方法如下：
+\textbf{场景表示}：在最初的神经辐射场中，研究者使用多层感知机(Multi-layer Perceptrons, MLP)来建模隐函数$f_{NeRF}$，在MonoSDF\cite{yu_monosdf_2022}， InstantNGP\cite{muller_instant_2022}等后续工作中提出使用MLP来建模该函数关系存在训练/渲染时间过长、建模能力差和遗忘等问题，并提出使用三维空间网格代替感知机学习隐函数表征。但使用三维网格建模场景信息存在模型体积大，无法泛化到大场景的问题，因此后续工作\cite{chen_tensorf_2022, fridovich-keil_k-planes_2023, cao_hexplane_2023, reiser_merf_2023}提出使用张量分解\cite{kolda_tensor_2009}的思想将三维张量分解为多个二维矩阵，从而将场景模型的空间复杂度从$\mathcal O (L^3)$降为$\mathcal O (L^2)$。本文总结现有隐式场表示的方法如下：
 \begin{itemize}
     \item \textbf{多层感知机}：使用一个带残差的多层感知机分别学习混合隐式场表征。在查询时直接将空间点信息输入网络，直接预测隐函数值。如图\ref{fig:scene-representation} (a)所示。
     \item \textbf{空间体素网格}：使用一个空间体素网格存储空间中不同区域的隐式场真值，在推理时使用三线性插值计算任意给定三维空间中点的隐式函数值。如图\ref{fig:scene-representation} (b)所示。
@@ -93,7 +93,26 @@
     \label{fig:scene-representation}
 \end{figure}
 
-相比神经辐射场主要通过图片中的特征学习场景的视觉信息，有符号距离场(Signed Distance Fields, SDF)可以用来表达更精确的场景几何信息。在有符号距离场 $f_{SDF}:(x,y,z)→d_i$中，任意空间点$P_i$被映射到其距离最近的表面的有符号距离$d_i\in \mathbb{R}$。通过从RGB图片中抽取多视角几何对应关系，或从深度图像中获取场景几何的直接观测结果，现有方法可以通过视觉感知输入重建较为准确的场景模型。然而这类方法通常无法得到逼真的RGB渲染图片。
+\textbf{混合隐式表征}：相比神经辐射场主要通过图片中的特征学习场景的视觉信息，符号距离场(Signed Distance Fields, SDF)可以用来表达更精确的场景几何信息。在有符号距离场 $f_{SDF}:(x,y,z)→d_i$中，任意空间点$P_i$被映射到其距离最近的表面的有符号距离$d_i\in \mathbb{R}$。通过从RGB图片中抽取多视角几何对应关系，或从深度图像中获取场景几何的直接观测结果，现有方法可以通过视觉感知输入重建较为准确的场景模型。然而这类方法通常无法得到逼真的RGB渲染图片。
+
+通过每个圆锥太体覆盖的体积的集成位置编码 (IPE) 表示，MipNeRF\cite{barron_mip-nerf_2021}有效地渲染视锥（而不是射线），从而减少了混叠的伪影现象。 NeRF++\cite{zhang_nerf_2020}分别对前景和背景表示进行建模，并分别进行采样，以应对无界 3D 场景建模的挑战。 NeRF-W\cite{martin-brualla_nerf_2021}引入了外观和瞬态编码来弥补受可变光照或瞬态遮挡物影响的弱点。 InstantNGP\cite{muller_instant_2022} 采用具有可训练特征向量的多分辨率哈希表，使 NeRF 能够学习高质量的神经图形基元。
+
+Block-NeRF\cite{tancik_block-nerf_2022}和 Mega-NeRF\cite{turki_mega-nerf_2022} 在空间上将场景分解为单独训练的 NeRF，使场景表示能够扩展到任意大的环境。 Bungee-NeRF\cite{xiangli_bungeenerf_2022}使用多尺度数据模型，在该模型中，可以在卫星级别的截然不同的尺度上观察到图像的变化。通过引入 LiDAR 和天空建模并补偿不同的曝光，城市辐射场\cite{rematas_urban_2022}扩展了 NeRF 模型以产生令人印象深刻的 3D 表面重建并在室外环境中合成高质量的新颖视图。
+
+此外，借助多视图立体几何\cite{deng_depth-supervised_2022} 或深度先验信息\cite{roessle_dense_2022} 的密集深度监督，NeRF 在新颖的视图合成和深度预测方面取得了惊人的成果，但难以扩展到大规模户外场景.
+
+\textbf{相机标定：}
+当前有多种 SLAM 系统通过联合估计相机参数和 3D 几何形状来重建场景。 ORB-SLAM\cite{mur-artal_orb-slam_2015}通过关联特征对应关系实时重建场景和估计相机位姿。 SfM（Structure-from-Motion，运动恢复结构） 系统\cite{schonberger_structure--motion_2016, chen_uncertainty-driven_2023} 能够同时校准内部和外部相机参数并重建场景。 相机-雷达混合SLAM\cite{kong_vmap_2023, deng_nerf-loam_2023} 对齐相机中心周围单位球体中的点和视觉特征之间的对应关系，从而提高了位姿估计精度并减少标定时间。
+
+随着基于 NeRF 的 3D 场景重建和渲染研究的蓬勃发展，最近的工作估计了 NeRF 之上的相机参数。给定一个经过训练的 NeRF 模型，iNeRF\cite{yen-chen_inerf_2021} 能够根据观察到的图像和来自 NeRF 模型的渲染图像之间的光度损失，执行无网格、仅 RGB 的 6-DOF 位姿估计。由于 RGB 和深度的时间一致性，iMAP\cite{sucar_imap_2021} 和 NICE-SLAM\cite{zhu_nice-slam_2022} 在房间内实时进行高保真重建和位姿估计方面取得了显著成果。 Martin-Brualla 等人提出了结合 TSDF 和辐射场的混合隐式场\cite{azinovic_neural_2022}，在优化相机位姿的同时提高了外观和几何形状的整体重建质量。与基于 NeRF 的方法不同，NeRFmm \cite{wang_nerf--_2022}，NopeNeRF\cite{bian_nope-nerf_2022} 和 SCNeRF \cite{jeong_self-calibrating_2021} 在训练中联合优化相机位姿和内在函数。 NeRFmm\cite{wang_nerf--_2022}只能用于前向场景。 SCNeRF\cite{jeong_self-calibrating_2021} 适用于具有任意非线性失真的通用相机。两者都不能扩展到大规模场景，不适用于本文中RGB-D错配场景的设置。
+
+\text{图像去雾：}
+现有图像去雾方法大致可以分为三类：基于先验的方法、基于学习的方法和散射介质中的三维重建。
+\begin{enumerate}
+    \item \textbf{基于先验信息的去雾方法}。基于先验的方法依赖于物理散射模型，通过使用启发式先验来估计和去除雾霾，这些先验包括对比度最大化先验、暗通道先验、颜色衰减先验、强度框先验和非局部先验 \cite{kaiming_he_single_2009, nishino_bayesian_2012, fattal_dehazing_2015, wu_contrastive_2021}。虽然这些方法产生了视觉上逼真的结果，但所采用的先验仅限于特定场景。例如，当图像中没有天空区域时，之前的暗通道方法表现不佳\cite{kaiming_he_single_2009}，因为它依赖于该区域的 RGB 值来估计大气光。此外，由于先验是在图像域中指定的，因此可能无法完全保证多视图一致性。
+    \item \textbf{基于学习的去雾方法}。这种类型的早期工作\cite{cai_dehazenet_2016, fujimura_dehazing_2021, dong_multi-scale_2020, li_aod-net_2017, liu_griddehazenet_2019, qin_ffa-net_2020, qu_enhanced_2019, ren_gated_2018, ren_single_2020, zhang_densely_2018}建立在物理散射模型的基础上，并学习恢复模型中的传输图、大气光和其他变量。然而，物理散射模型对学习变量高度敏感，其中小的扰动可能导致输出图像中出现明显的伪影。最近的趋势\cite{song_vision_2022, liu_griddehazenet_2019, chen_gated_2019, deng_hardgan_2020, dong_multi-scale_2020, qin_ffa-net_2020, wu_contrastive_2021, wang_eaa-net_2021} 以端到端的方式模拟了模糊到清晰的图像转换。例如，AECR-Net \cite{wu_contrastive_2021} 在包含同一场景的成对模糊和非模糊图像的数据集上进行训练。然而，这些模型可能无法推广到分布外的数据。
+    \item \textbf{散射介质三维重建}。散射介质中的 3D 重建与所提出的方法共享相似的多视图设置。他们的目标是根据从不同视点拍摄的同一朦胧场景的多张图像重建 3D 场景。然而，这些方法依赖于主动光源\cite{murez_photometric_2017, narasimhan_structured_2005, fujimura_photometric_2018, tsiotsios_backscatter_2014}、额外的感官数据，例如深度传感器或激光器\cite{caraffa_stereo_2013, li_simultaneous_2015, heide_imaging_2014, satat_towards_2018, wang_programmable_2018}。这种最近的方法\cite{fujimura_dehazing_2021, caraffa_stereo_2013, song_deep_2019, li_simultaneous_2015}依靠基于学习的技术从图像和稀疏点云中提取特征，并使用它们进行多视图立体以恢复密集的几何表示。相反，我们仅使用来自多视图的模糊图像直接恢复场景辐射度和几何形状。
+\end{enumerate}
 
 \section{本课题主要工作及主要创新点}
 

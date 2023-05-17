@@ -12,12 +12,12 @@
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/scene-graph.pdf}
+    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/related-work/scene-graph.pdf}
     \caption{场景图模型}
     \label{fig:scene-graph model}
 \end{figure}
 
-\section{场景图建模}
+\section{基于场景图的复杂动态场景建模}
 
 本节将介绍使用混合隐式场景图模型对复杂动态场景进行建模的方法。 在本文中，我们将场景图定义为一个五元组\cite{ost_neural_2021}：
 \begin{equation}
@@ -27,7 +27,7 @@
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/nsg-scene-graph visualization.png}
+    \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/related-work/nsg-scene-graph visualization.png}
     \caption{NSG\cite{ost_neural_2021}中提出的场景图分解方法。}
     \label{fig:NSG scene graph}
 \end{figure}
@@ -69,7 +69,7 @@
     F_{\theta_o}(\xo, \dobj) = \classmodel(\xo, \dobj, \latent).
 \end{equation}
 
-\section{组合渲染}
+\section{复杂场景图组合渲染过程}
 当物体在场景中移动时，物体边界框的世界坐标$\po$也自然会随之移动，因此我们在进行渲染的时候也需要将物体模型渲染的辐射量进行相应的移动。设物体中的一个采样点在世界系下的坐标为$\xw$，通过物体位姿的转换可以得到其在该物体的局部边界框坐标系下的坐标$\xo$：
 \begin{equation}
     \xo = s_o\objpose\xw,
@@ -83,9 +83,9 @@
 在获得射线与物体边界框的交点后，可以将所有射线深度在这一区间中的采样点$X_o =\{\xo |\tino \leq t_{o} \leq \touto\}$分配到对应渲染模型中进行推理，其余点使用背景模型进行推理。
 当所有采样点的辐射和体密度值均已求得后，可以使用体渲染方法将采样点序列渲染为输出RGB颜色。
 
-\section{场景图编辑}
+\section{面向Real2Sim的场景图编辑}
 
-当对一个动态场景获得其训练好的场景图后，便可以对其中的动态物体进行编辑。本文在这里介绍对车辆行驶轨迹和外观进行编辑的方法。
+当对一个动态场景获得其训练好的场景图后，便可以对其中的动态物体进行编辑来实现Real2Sim仿真的要求。本文在这里介绍对车辆行驶轨迹和外观进行编辑的方法。
 
 \subsection{车辆行驶轨迹编辑}
 对于场景图$\mathcal{S}$中的叶子节点$F_i$，其轨迹可以表示为时间到边界框位姿的函数：

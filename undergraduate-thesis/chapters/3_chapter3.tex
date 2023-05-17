@@ -15,7 +15,7 @@ NeRF\cite{mildenhall_nerf_2020}将一个三维场景表示为一个隐式函数�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/shape-radiance ambiguity.png}
+    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/omni-nerf/shape-radiance ambiguity.png}
     \caption{形状-辐射二义性示意图\cite{zhang_nerf_2020}}
     \label{fig:omni-nerf shape-radiance ambiguity}
 \end{figure}
@@ -40,7 +40,7 @@ NeRF\cite{mildenhall_nerf_2020}将一个三维场景表示为一个隐式函数�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/neural-rgbd weighting function.png}
+    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/omni-nerf/neural-rgbd weighting function.png}
     \caption{公式\ref{eq: omninerf-basedline-weighting}所计算的权重函数分布。}
     \label{fig:omninerf-baseline-weighting}
 \end{figure}
@@ -52,7 +52,7 @@ NeRF\cite{mildenhall_nerf_2020}将一个三维场景表示为一个隐式函数�
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\textwidth]{undergraduate-thesis/images/omninerf-error2.pdf}
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/omni-nerf/omninerf-error2.pdf}
     \caption{混合隐式场内在误差的二维示意图}
     \label{fig:omninerf-internal error}
 \end{figure}
@@ -81,7 +81,7 @@ NeRF\cite{mildenhall_nerf_2020}将一个三维场景表示为一个隐式函数�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{undergraduate-thesis/images/omninerf-error1.pdf}
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/omni-nerf/omninerf-error1.pdf}
     \caption{深度监督信号下的混合隐式场二义性示意图。}
     \label{fig:omni-nerf depth error}
 \end{figure}
@@ -106,21 +106,21 @@ NeRF\cite{mildenhall_nerf_2020}将一个三维场景表示为一个隐式函数�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{undergraduate-thesis/images/omninerf-model.pdf}
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/omni-nerf/omninerf-model.pdf}
     \caption{基于全方向距离场的混合隐式表征方案}
     \label{fig:omninerf-model}
 \end{figure}
 
 通过将符号距离函数和残差函数重新组合，我们便可以得到全方向距离函数值，将该值按照现有体积渲染方案经过积分，便可以在一条射线上得到渲染颜色$C(\mathbf{r})$。 可以验证，我们提出的混合隐式场融合方案可以从理论上解决混合隐式场的内在误差和深度监督后的距离-深度二义性。
 
-\section{场景表示实现}
+\section{全方向混合隐式场景表示模型实现}
 在前面几节中，我们基于两种现有方法中观察到的误差和二义性，在理论上提出了可以去除这两种误差的解决方案，在本节中，我们详细描述使用全方向距离-辐射混合隐式场的实现方案。
 
 我们在第\ref{chapter:related-work}章中介绍了现有的主流场景表示方法，其中，基于哈希体素网格的场景表示可以准确地建模场景细节但需要占据较大的存储空间。这些表示主要由于图形硬件限制而难以扩展到更大的场景。体积数据必然比 2D 表面表示更大并在内存中占用更多空间。类似地，虽然相机光线最多与硬表面相交一次，但渲染穿过体积的光线可能需要许多样本。使用神经或混合表示时，每一个采样在计算或内存带宽方面的评估都非常昂贵。因此，这类方法只适用于范围有限的场景（空间中的单个对象或Forward-Facing的场景）的方法通常不会扩展到更大的无界场景。而基于多平面的张量分解场景表示在准确性上有所下降，但可以用更低的存储空间达到相媲美的效果。在本课题中，我们结合这两种不同的场景表示，使用一个较低分辨率的哈希体素网格建模场景细节，并使用一个更高分辨率的多平面作为辅助，以达到高效的准确场景地图骨干模型。我们的网络结构图如图\ref{fig:omninerf-scene-representation}所示。
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{undergraduate-thesis/images/omninerf-scene-representation.pdf}
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/omni-nerf/omninerf-scene-representation.pdf}
     \caption{场景表示模型架构图}
     \label{fig:omninerf-scene-representation}
 \end{figure}
@@ -185,14 +185,14 @@ Mip-NeRF\cite{barron_mip-nerf_2021}使用从粗到精的重采样策略，其中
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{undergraduate-thesis/images/mip-nerf360 proposal network.png}
+    \includegraphics[width=\textwidth]{undergraduate-thesis/images/omni-nerf/mip-nerf360 proposal network.png}
     \caption{Proposal网络结构示意图。}
     \label{fig:related-work proposal network}
 \end{figure}
 
 如图\ref{fig:related-work proposal network}所示，Mip-NeRF 使用一个多尺度 MLP，该 MLP 被反复查询来获取权重，这些权重被重新采样到下一阶段的间隔中，并监督在所有尺度上生成的渲染。Mip-NeRF 360使用“Proposal MLP”，在渲染阶段，使用“NeRF MLP”来生成权重和颜色来渲染图像。Proposal MLP 被训练以产生与 NeRF MLP 的 w 输出一致的Proposal权重$\hat{w}$。通过使用小型Proposal MLP 和大型 NeRF MLP，Mip-NeRF 360获得了一个具有高容量且易于训练的组合模型。
 
-\subsubsection{重采样方法}
+\subsubsection{基于重要性的重采样方法}
 
 我们会首先进行从相机原点$t_n$到假想无穷远点$t_f$的归一化空间中均匀采样：
 \begin{equation}
