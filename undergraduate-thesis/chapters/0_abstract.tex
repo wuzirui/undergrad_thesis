@@ -21,29 +21,32 @@
 \begin{abstract}
 % 中文摘要正文从这里开始
 
-三维场景重建在三维计算机视觉和机器人领域发挥着重要作用。近年来，出现了大量自动驾驶公司，旨在用计算机算法取代人类驾驶员，同时确保驾驶安全。然而，自动驾驶算法的实施并不总是顺利的，这些算法的安全性已经成为学术界和工业界日益关注的问题。为了提高自动驾驶算法的安全性，研究人员正在努力实现从真实到模拟再到真实的数据循环，这一过程被称为Real2Sim2Real。在此背景下，本文重点解决其中的第一步，即Real2Sim场景图三维重建。为了从传感器观测数据中重建高质量的三维场景，本文使用近年来快速发展的混合神经隐式场景表征，对多元传感器信息进行融合来学习场景表征模型。本文的主要贡献和创新点包括：
+三维场景重建在三维计算机视觉和机器人领域发挥着重要作用，然而传统三维重建方法所渲染的图像并不具备真实感。近年来，随着神经隐式场景地图表征的出现，真实感渲染方法不断涌现出来，然而这类方法对场景、拍摄条件和场景中的动态物体等方面要求很高。在处理真实世界数据时，经常产生退化的结果。即使在理想情况下拍摄的场景，也经常出现重建表面几何较差的问题。对于三维重建的下游应用场景，无论渲染图片的真实感还是重建的几何形状都至关重要，如在自动驾驶行业中， 为了提高自动驾驶算法的安全性，研究人员正在努力实现从真实到模拟再到真实的数据循环，这一过程被称为Real2Sim2Real。则三维重建则可以对应Real2Sim2Real中“Real2Sim”这一步。
+
+本文着重解决融合多元传感信息进行高质量隐式重建的问题，为此，本文使用近年来快速发展的混合隐式场景表征，首先在理想拍摄条件下进行混合隐式场景地图表征重建，接着讨论真实世界拍摄数据集中广泛存在的两种问题，最后以自动驾驶Real2Sim仿真场景重加为应用背景，重建真实世界中复杂的动态环境地图。综上，本文的主要贡献和创新点包括：
 \begin{enumerate}
     \item 结合不同种类的隐式场，基于多传感器输入数据建立混合距离-辐射场，用于理想传感器输入时的场景外观和几何的高精度建模；
-    \item 观察到真实场景中获取的传感器数据会出现退化的情形。本文可以从异步RGBD序列中训练神经辐射场，首次提出从雾状图像中学习神经隐式场，精确解耦场景结构和悬浮粒子，并利用雾状图像深度信息作为RGB图像的补充，从而实现高质量的隐式场景表示学习和灵活的散射效果控制，使得即使在退化传感信息输入的条件下也可以达到近似理想状态下的建模效果；
-    \item 从RGB-D真实数据中学习混合隐式场景图，实现对动态场景的理解和编辑，促进自动驾驶Real2Sim2Real的技术发展；
-    \item 在公共数据集和模拟和真实场景中的各种退化场景上进行广泛的实验和比较，以验证所提出方法的有效性。
+    \item 观察到真实场景中获取的传感器数据会出现退化的情形。本文可以从异步RGBD序列中利用轨迹的时空先验信息训练神经辐射场，首次提出从雾状图像中学习神经隐式场，精确解耦场景结构和悬浮粒子，并利用雾状图像深度信息作为RGB图像的补充，从而实现高质量的隐式场景表示学习和灵活的散射效果控制，使得即使在退化传感信息输入的条件下也可以达到近似理想状态下的建模效果；
+    \item 从RGB-D真实数据中学习混合隐式场景图，实现对动态场景的理解和编辑，促进自动驾驶Real2Sim2Real的技术发展。
 \end{enumerate}
 
-
+本文在公共数据集和模拟和真实场景中的各种退化场景上进行广泛的实验和比较，以验证所提出方法可以在理想和真实拍摄下从复杂动态场景中重建高质量几何并渲染真实感的图片。
 
 \end{abstract}
 
 % 英文摘要章节
 \begin{abstractEn}
 % 英文摘要正文从这里开始
-Three-dimensional scene reconstruction plays a significant role in the fields of 3D computer vision and robotics. In recent years, a large number of autonomous driving companies have emerged, aiming to replace human drivers with computer algorithms while ensuring driving safety. However, the implementation of autonomous driving algorithms is not always smooth, and the safety of these algorithms has become a growing concern in both academia and industry. In this context, this thesis focuses on the first step of the Real2Sim2Real process, namely the Real2Sim scene map 3D reconstruction. To reconstruct high-quality 3D scenes from sensor observation data, this paper uses the rapidly developing hybrid neural implicit scene representation to merge multi-sensor information for learning scene representation models. The main contributions and innovations of this thesis include:
+Three-dimensional scene reconstruction plays a significant role in the fields of 3D computer vision and robotics. 
+Recent progress of neural implicit scene representations enable photo-realistic rendering on a reconstructed 3D scene. However, current methods have strict requires on the 3D scene, capturing conditions and the dynamic objects in the scene, which results in degrading results when processing real-world datasets. Even captures in ideal conditions, these methods may produce sub-optimal reconstructed geometries.  However, for downstream applications such as autonomous driving, both realistic rendering and accurate geometry recovering are crucially important. In order to improve the safety of autonomous driving algorithms, researchers are striving to achieve a data-loop from real to simulated and then to real, known as Real2Sim2Real. Then 3D reconstruction can correspond to the step of "Real2Sim" in Real2Sm2Real.
+
+This article focuses on solving the problem of integrating multiple sensor information for high-quality implicit reconstruction. To this end, this article uses the rapidly developing hybrid implicit scene representation in recent years. Firstly, the hybrid implicit scene map representation reconstruction is performed under ideal shooting conditions. Then, two widely existing problems in real-world captured datasets are discussed. Finally, the application background is the re addition of autonomous driving Real2Sim simulation scenes, Reconstruct complex dynamic environment maps in the real world. In summary, the main contributions and innovations of this article include:
 
 \begin{enumerate}
     \item Combining different types of implicit fields and establishing a hybrid distance-radiance field based on multi-sensor input data for high-precision modeling of scene appearance and geometry under ideal sensor input conditions;
-    \item Observing that sensor data obtained in real scenarios may be degraded. This thesis can train neural radiance fields from asynchronous RGBD sequences and proposes to learn neural implicit fields from foggy images for the first time, accurately decoupling scene structure and suspended particles, and using foggy image depth information as a supplement to RGB images, thus achieving high-quality implicit scene representation learning and flexible scattering effect control, enabling modeling results to approach ideal conditions even under degraded sensor information input;
-    \item Learning hybrid implicit scene graphs from RGB-D real data, realizing the understanding and editing of dynamic scenes, and promoting the technological development of autonomous driving Real2Sim2Real;
-    \item Conducting extensive experiments and comparisons on public datasets and various degraded scenarios in simulation and real scenes to verify the effectiveness of the proposed methods.
+    \item Observing that sensor data obtained in real scenarios may be degraded. This thesis can train neural radiance fields from asynchronous RGBD sequences by utilizing implicit spatial-temporal prior from the trajectory and proposes to learn neural implicit fields from foggy images for the first time, accurately decoupling scene structure and suspended particles, and using foggy image depth information as a supplement to RGB images, thus achieving high-quality implicit scene representation learning and flexible scattering effect control, enabling modeling results to approach ideal conditions even under degraded sensor information input;
+    \item Learning hybrid implicit scene graphs from RGB-D real data, realizing the understanding and editing of dynamic scenes, and promoting the technological development of autonomous driving Real2Sim2Real.
 \end{enumerate}
-
+This article conducts extensive experiments and comparisons on various degraded scenes in public datasets and simulated and real scenes to verify that the proposed method can reconstruct high-quality geometry and render realistic images from complex dynamic scenes under ideal and real shooting conditions.
 
 \end{abstractEn}

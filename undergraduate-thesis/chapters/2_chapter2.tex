@@ -210,7 +210,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 本节介绍了神经隐式场出现以来，所使用的场景表示从多层感知机\cite{mildenhall_nerf_2020,park_deepsdf_2019, mescheder_occupancy_2019, shim_snerl_2023, zhi_-place_2021}逐渐发展为体素网格\cite{fridovich-keil_plenoxels_2022,yu_monosdf_2022,muller_instant_2022,jiang_instantavatar_2022}、多平面\cite{chen_tensorf_2022,fridovich-keil_k-planes_2023,cao_hexplane_2023}等场景表示方法。
 虽然多平面的方法可以对一个简单场景进行高效、准确的表示学习，但当场景规模逐渐从物体、室内场景基本扩展到室外自动驾驶大场景下时，使用单一的多平面场景表示反而会产生退化的效果。本文将提出一种混合场景表示方法，使得即便在更大规模的复杂场景中，依然可以用较小的存储空间获得准确的场景表示。
 
-\newpage
+
 \section{真实感的神经渲染方法：场景扭曲变换}
 \label{sec: related-work realistic rendering}
 除了使用不同的场景表示方法外，为了实现更真实的渲染效果，研究者还在其他方面做出了改进。其中，最为典型的方法是将三维欧式空间通过变换，映射到扭曲后的参数空间。
@@ -315,23 +315,10 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 本节介绍了使用场景扭曲变换提高场景表示模型利用率的几种方法，然而目前的扭曲变换方法无法解决在更大规模的室内、室外复杂场景的高效表达，因而限制了神经隐式场在自动驾驶等领域的发展。本文提出基于神经点云的场景扭曲变换，使得场景表示可以自适应地拟合大规模场景。
 
 
-\newpage
+
 \section{辐射-距离混合隐式场}
 \label{sec: related-work density-distance fields}
 本章的前两节介绍了以神经辐射场的神经场景表示的发展，然而单一的辐射场景表示对于场景几何的建模能力较差。本节将首先分析辐射场这一不足的原因，接着分别从采样策略、体渲染模型、多元传感信息融合和混合隐式场优化的几个方面介绍辐射-距离混合隐式场。
-
-\subsection{神经辐射场的形状-辐射二义性}
-\label{sec: related-work shape-radiance ambiguity}
-在没有正则化的情况下，NeRF\cite{mildenhall_nerf_2020}对仅依赖于视图的外观进行建模的能力导致 3D 形状和辐射之间存在一个二义性，使得网络可以接受退化的内在形状，而渲染出真实感颜色。对于任意的、不正确的形状，可以证明存在一组辐射场可以完美地解释训练图像，但不能很好地推广到新的测试视图。
-
-基于这一观察，近年来，研究者提出同时优化辐射和距离场，并在体渲染过程中将这两个完全不同的隐式场的输出进行融合\cite{oechsle_unisurf_2021,gropp_implicit_2020,yariv_multiview_2020,yariv_volume_2021,wang_neus_2021,shao_doublefield_2022,darmon_improving_2022,ueda_neural_2022,long_sparseneus_2022,yu_monosdf_2022,wang_pet-neus_2023,yuan_monocular_2023,liang_hr-neus_2023,chen_dehazenerf_2023,zhu_vdn-nerf_2023,azinovic_neural_2022, sun_neural_2022}。 简单来说，就是将神经符号距离场（Neural SDF）通过几何变换转换为辐射场中体密度的过程。然而，由于这两种隐式场天然的差距，这一融合并不是一件易事。为了弥补隐式场直接的领域差距，研究者在采样策略\cite{yariv_volume_2021, mildenhall_nerf_2020, barron_mip-nerf_2022, oechsle_unisurf_2021}，体渲染方法\cite{oechsle_unisurf_2021,yariv_volume_2021,wang_neus_2021}，融合多元传感信息\cite{azinovic_neural_2022,yu_monosdf_2022}和隐式场优化进行了大量的研究工作，如图\ref{fig:related-work sdfstudio}所示\cite{yu_sdfstudio_2022}。
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/sdfstudio.png}
-    \caption{混合隐式场中各个组件的相关研究工作\cite{yu_sdfstudio_2022}}
-    \label{fig:related-work sdfstudio}
-\end{figure}
 
 \subsection{采样策略}
 神经辐射场中首次将隐式表达用于体积渲染积分的管线中，然而在计算机实现中必须对体积积分进行离散化，使用有限的采样点最大限度地还原连续体积中的密度分布。因此，选取合适数量、位置的采样点对于隐式场场景表示学习格外重要。本节首先介绍NeRF\cite{mildenhall_nerf_2020}中的分层采样方法，接着介绍后续工作中对该方法的改进。

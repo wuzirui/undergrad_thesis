@@ -206,19 +206,19 @@ Ours         & \textbf{29.01} & \textbf{0.077} & \textbf{0.882} & \textbf{0.929}
 
 本文使用真实世界和合成数据集进行 RGB 比较。通过在观测数据上添加散射效果，并将模型重新输出的图片与观测数据对比，即可计算PSNR、SSIM和LPIPS等评价指标。这里介绍该实验中所使用的基线模型。
 
-\noindent\textbf{基于先验的方法}：
+\textbf{基于先验的方法}：
 对于基于先验的方法，我们选择 DCP~\cite{kaiming_he_single_2009} 作为代表。 DCP 方法的输入完全是模糊的 RGB 图像。
 
-\noindent\textbf{基于学习的方法}：
+\textbf{基于学习的方法}：
 对于基于学习的方法， 本文选择 FFA-Net~\cite{qin_ffa-net_2020}、AECR-Net~\cite{wu_contrastive_2021} 和 gUNet ~\cite{song_rethinking_2022}作为比较的基线模型。这里直接使用他们发布的代码中的预训练模型参数，并使用模糊的 RGB 图像作为输入。
 
-\noindent\textbf{基于NeRF直接去雾}：
+\textbf{基于NeRF直接去雾}：
 我们使用另一个表示为 "NeRF w/ na\"ive dehaze" 的基线，使用视角无关的 NeRF~\cite{mildenhall_nerf_2020} 直接在多视图模糊图像上进行训练，然后使用恒定阈值过滤掉低于它的所有体积密度渲染。
 
-\noindent\textbf{NeRF 相关基线模型}：
+\textbf{NeRF 相关基线模型}：
 本文还将所提出的方法与 NeDDF ~\cite{ueda_neural_2022} 进行了比较，后者将模糊的 RGB 图像和相机位姿作为输入。NeDDF 旨在为半透明对象建模而不是恢复几何形状。它的渲染步骤之一会生成表示表面的无符号距离函数 (UDF)。理论上，UDF 的零水平集的边界代表场景的表面。然而，在实践中，NeDDF 不会在模糊场景中收敛。本文尝试使用 NeRF 的蒸馏学习来提高其收敛性，但仅实现了部分收敛，甚至在最后也没有找到零集。
 
-\noindent\textbf{散射媒介基线中的 3D 重建}：
+\textbf{散射媒介基线中的 3D 重建}：
 本文还将与 ~\cite{fujimura_dehazing_2021} 中介绍的方法进行比较。它是 MVDepthNet 的改进版本，用于处理有雾的场景。使用基于 CNN 的网络提取特征，然后用于 3D 匹配。本文直接使用他们代码发布中的预训练模型参数。该基线的输入是模糊的 RGB 图像和相机位姿。遗憾的是，该基线在测试时未能返回任何有效的深度图，因此未显示在实验结果中。
 
 \input{undergraduate-thesis/tables/dehaze}
@@ -353,13 +353,13 @@ LPIPS $\downarrow$ & 0.456 & 0.415 & 0.425  & 0.186          & \textbf{0.176}  \
 \subsection{去雾方法消融实验}
 本文通过消融实验验证了所提出的方法设计。定量结果显示在表\ref{tab:dehaze-ablation-rgb}中，这里使用合成数据进行定量评估。表 \ref{tab:dehaze-ablation-rgb} 中的第 1 列显示了方法组件的不同组合。
 
-\noindent\textbf{深度权重重加权的效果}
+\textbf{深度权重重加权的效果}
 这里将丢弃深度权重重新加权步骤的方法称为“Ours w/o depth weight re-weighting”。也就是说，渲染深度${t}_\text{haze}$值与输入值相同。去除深度重新加权会导致深度值严重低估，进一步导致图像去雾效果下降。
 
-\noindent\textbf{视图依赖控制的效果}
+\textbf{视图依赖控制的效果}
 表 \ref{tab:dehaze-ablation-rgb} 中的第二行和第三行显示了捕获视图依赖性的不同方法的结果。第二行（Ours w/o view-dependency）指的是一个去除视角相关特性的 NeRF。第三行（没有协方差损失）使用标准的 NeRF 表示但没有协方差损失。实验结果表明，控制视图依赖不利于几何恢复。然而，这两种选择的图像恢复结果明显比完整方法差。这证明了本文提出的协方差损失在消除视图依赖效应的模糊性方面的有效性。
 
-\noindent\textbf{多视图一致性控制的效果。}
+\textbf{多视图一致性控制的效果。}
 表 \ref{tab:dehaze-ablation-rgb} 中的第五行 (DCP-NeRF) 显示了使用 Dark Channel Prior~\cite{kaiming_he_single_2009} 首先对图像进行去雾并在去雾前的图像上训练 NeRF 模型的结果。结果表明 DCP 未能在多个视图中产生一致的结果。在表 \ref{tab:exp-image-quality} 中，它的图像恢复指标甚至比单独的 Dark Channel Prior 还要差。这可能是因为 NeRF 表示无法理解不一致的图像输出。
 
 \input{undergraduate-thesis/tables/dehaze-ablation} 
