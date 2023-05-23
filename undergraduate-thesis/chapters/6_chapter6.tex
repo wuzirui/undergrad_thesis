@@ -23,7 +23,7 @@ NeuralRGB-D\cite{azinovic_neural_2022}提出了一个基于仿真的室内场景
 \end{figure}
 
 \subsubsection{KITTI数据集}
-KITTI数据集\cite{geiger_are_2012,geiger_vision_2013}是在德国卡尔斯鲁厄及其周边地区行驶时从移动平台\ref{fig:exp-kitti-platform}记录的。它包括来自组合 GPS/IMU 系统的相机图像、激光扫描、高精度 GPS 测量和 IMU 加速度。该数据集的主要目的是推动以自动驾驶为目标的计算机视觉和机器人算法的发展。在本文中，我们使用其中包含动态物体较多的片段，以验证本文所提出的场景图方法在重建复杂动态场景时的性能。
+KITTI数据集\cite{geiger_are_2012,geiger_vision_2013}是在德国卡尔斯鲁厄及其周边地区行驶时从移动平台\ref{fig:exp-kitti-platform}记录的。它包括来自组合 GPS/IMU 系统的相机图像、激光扫描、高精度 GPS 测量和 IMU 加速度。该数据集的主要目的是推动以自动驾驶为目标的计算机视觉和机器人算法的发展。在本文中使用其中包含动态物体较多的片段，以验证本文所提出的场景图方法在重建复杂动态场景时的性能。
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/experiments/kitti-platform.png}
@@ -54,12 +54,12 @@ KITTI数据集中提供了场景中动态物体的边界框位姿，如图\ref{f
     \label{fig:exp-aus-dataset}
 \end{figure}
 
-在真实场景中，RGB 相机和 LiDAR 通常不会对齐，因此我们在模拟器中以高频率（50fps）对原始 RGB-D 序列进行采样，并使用不同的起始帧对其进行重新采样，以获得逼真的异步 RGB-D 序列.为了进一步增加真实性，我们向固定偏移量添加了随机扰动。采样方法如图\ref{fig:exp-aus-offset}所示。
+在真实场景中，RGB 相机和 LiDAR 通常不会对齐，因此本文在模拟器中以高频率（50fps）对原始 RGB-D 序列进行采样，并使用不同的起始帧对其进行重新采样，以获得逼真的异步 RGB-D 序列.为了进一步增加真实性，本文向固定偏移量添加了随机扰动。采样方法如图\ref{fig:exp-aus-offset}所示。
 
 如图\ref{fig:exp-rgbd-alignment}所示，RGB相机和深度相机在一次飞行中覆盖了几乎相同的轨迹，因此轨迹先验可以在RGB序列中隐式学习，并可以直接转换为预测深度相机位姿。
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/time-pose function/RGBD_alignment.pdf}
+    \includegraphics[width=0.4\textwidth]{undergraduate-thesis/images/time-pose function/RGBD_alignment.pdf}
     \caption{RGB和深度序列轨迹的可视化演示。}
     \label{fig:exp-rgbd-alignment}
 \end{figure}
@@ -67,7 +67,7 @@ KITTI数据集中提供了场景中动态物体的边界框位姿，如图\ref{f
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/experiments/offset.pdf}
-    \caption{采样策略的可视化演示。我们从每 5 帧原始 RGB-D 数据中采样一个 RGB 帧。我们通过向 RGB 帧时间戳添加不同的偏移量来计算深度帧采样时间。 AUS 数据集中包含两种类型的偏移量：(1) 两个相邻 RGB 帧之间时间间隔的 10\%-50\% 的固定偏移量（总共 5 条迹线）； (2) 不固定的随机偏移量。}
+    \caption{采样策略的可视化演示。本文从每 5 帧原始 RGB-D 数据中采样一个 RGB 帧。本文通过向 RGB 帧时间戳添加不同的偏移量来计算深度帧采样时间。 AUS 数据集中包含两种类型的偏移量：(1) 两个相邻 RGB 帧之间时间间隔的 10\%-50\% 的固定偏移量（总共 5 条迹线）； (2) 不固定的随机偏移量。}
     \label{fig:exp-aus-offset}
 \end{figure}
 
@@ -98,7 +98,7 @@ KITTI数据集中提供了场景中动态物体的边界框位姿，如图\ref{f
 \subsection{评价指标}
 本文使用RGB渲染和深度预测的标准预测指标来评估所提出方法的有效性。
 \subsubsection{RGB渲染}
-在视角合成上，我们使用PSNR (Peak Signal-to-Noise Ratio) 峰值信噪比、结构相似度SSIM (Structural SIMilarity)以及学习感知图像块相似度(Learned Perceptual Image Patch Similarity, LPIPS)。
+在视角合成上，本文使用PSNR (Peak Signal-to-Noise Ratio) 峰值信噪比\cite{hore_image_2010}、结构相似度SSIM (Structural SIMilarity)\cite{hore_image_2010}以及学习感知图像块相似度(Learned Perceptual Image Patch Similarity, LPIPS)\cite{zhang_unreasonable_2018}。
 
 给定大小为$m\times n$的原图$I$和噪声图像$K$，峰值信噪比PSNR被定义为：
 \begin{equation}
@@ -121,7 +121,7 @@ $\alpha, \beta, \gamma$为超参数，本文中均设置为1。
 学习感知图像块相似度(Learned Perceptual Image Patch Similarity, LPIPS)\cite{zhang_unreasonable_2018}也称为“感知损失”(perceptual loss)，用于度量两张图像之间的差别。该度量标准学习生成图像到真实图像的反向映射强制生成器学习从假图像中重构真实图像的反向映射，并优先处理它们之间的感知相似度。LPIPS 比传统方法（比如L2/PSNR, SSIM, FSIM）更符合人类的感知情况。LPIPS的值越低表示两张图像越相似，反之，则差异越大。
 
 \subsubsection{场景几何深度预测}
-本文中使用的深度评估指标包含Abs. Rel, Sq. Rel, RMSE, RMSE $\log$, $\delta_{\{1,2,3\}}$，其计算方法如下所示：
+本文中使用的深度评估指标\cite{wang_regularizing_2021}包含Abs. Rel, Sq. Rel, RMSE, RMSE $\log$, $\delta_{\{1,2,3\}}$，其计算方法如下所示：
 \begin{align}
     \text{Abs. Rel} &= \frac{1}{|D|}\sum_{d\in D} |d - \hat{d}| / d,\\
     \text{Sq. Rel} &= \frac{1}{|D|}\sum_{d\in D} ||d - \hat{d}||^2 / d,\\
@@ -130,24 +130,43 @@ $\alpha, \beta, \gamma$为超参数，本文中均设置为1。
     \delta_i &= \frac{1}{|D|}|\{d\in D | \max(\frac{d}{\hat{d}}, \frac{\hat{d}}{d}) < 1.25^i\}|.
 \end{align}
 
+\input{undergraduate-thesis/tables/aus-nvs-quant}
+
+\input{undergraduate-thesis/tables/aus-depth-quant}
+
+\input{undergraduate-thesis/tables/aus-tpf-quant}
+
+\input{undergraduate-thesis/tables/dehaze}
+
+\subsection{基线模型}
+
+\textbf{NeRF 相关基线模型}：
+本文首先和隐式三维重建的主流方法进行比较，使用NeRF\cite{mildenhall_nerf_2020}、NeuralRGB-D\cite{azinovic_neural_2022}作为基线模型，通过RGB-D输入训练并在新视角下进行图片合成和深度预测。除此以外，在大规模城市级别场景上，本文使用Mega-NeRF\cite{turki_mega-nerf_2022}作为主要基线模型，对于存在光照变化的数据，本文添加NeRF-W\cite{martin-brualla_nerf_2021}作为额外基线模型。本文还将所提出的方法与 NeDDF ~\cite{ueda_neural_2022} 进行了比较，后者将模糊的 RGB 图像和相机位姿作为输入。NeDDF 旨在为半透明对象建模而不是恢复几何形状。它的渲染步骤之一会生成表示表面的无符号距离函数 (UDF)。理论上，UDF 的零水平集的边界代表场景的表面。然而，在实践中，NeDDF 不会在模糊场景中收敛。本文尝试使用 NeRF 的蒸馏学习来提高其收敛性，但仅实现了部分收敛，甚至在最后也没有找到零集。
+
+\textbf{图像去雾基线模型}：
+在雾天数据上，本文选择 DCP~\cite{kaiming_he_single_2009} 作为基于先验的去雾方法代表。 DCP 方法的输入完全是模糊的 RGB 图像。FFA-Net~\cite{qin_ffa-net_2020}、AECR-Net~\cite{wu_contrastive_2021} 和 gUNet ~\cite{song_rethinking_2022}作为比较的基于学习的去雾基线模型。这里直接使用他们发布的代码中的预训练模型参数，并使用模糊的 RGB 图像作为输入。本文使用另一个表示为 "NeRF w/ na\"ive dehaze" 的基线，使用视角无关的 NeRF~\cite{mildenhall_nerf_2020} 直接在多视图模糊图像上进行训练，然后使用恒定阈值过滤掉低于它的所有体积密度渲染。本文还与 ~\cite{fujimura_dehazing_2021} 中介绍的方法进行比较。它是 MVDepthNet 的改进版本，用于处理有雾的场景。使用基于 CNN 的网络提取特征，然后用于 3D 匹配。本文直接使用他们代码发布中的预训练模型参数。该基线的输入是模糊的 RGB 图像和相机位姿。遗憾的是，该基线在测试时未能返回任何有效的深度图，因此未显示在实验结果中。
+
+\textbf{动态场景基线}
+对于室外动态复杂场景，本文使用SRN\cite{sitzmann2019srns}、NeRF\cite{mildenhall_nerf_2020}、NSG\cite{ost_neural_2021}为主要基线模型，为了公平期间，由于NeRF模型主要用于静态重建而无法处理动态场景，本文使用添加了时间输入的NeRF模型（表\ref{tab:scene-graphs}中NeRF-t一列所示）作为对比对象。
+
 \subsection{实验结果}
 本文在NeuralRGB-D数据上和AUS数据上分别进行重建，其中，NeuralRGB-D数据使用同步RGB-D相机采集多元传感信息，AUS数据上使用RGB和不同步的激光雷达数据作为输入。
 
 在NeuralRGB-D数据上渲染颜色和深度预测的数值结果如表\ref{tab:omninerf}所示。在AUS数据上渲染颜色的数值结果如表\ref{tab: aus-nvs-quant}所示，深度预测的结果如\ref{tab:aus-depth-quant}所示。使用TPF进行深度图位姿预测的初始结果和经过联合优化后的误差如表\ref{tab:aus-tpf-quant}所示。
 
 \begin{table}[ht]
+\caption{在NeuralRGB-D数据上评估渲染颜色和深度的数值结果}
+\label{tab:omninerf}
 \centering
 \resizebox{0.75\textwidth}{!}{%
 \begin{tabular}{llllll}
 \hline
 方法           & PSNR$\uparrow$          & RMSE $\downarrow$          & $\delta_1\quad \uparrow$           & $\delta_2\quad \uparrow$           & $\delta_3\quad \uparrow$           \\ \hline
-NeRF         & 26.56          & 0.087          & 0.83           & 0.905          & 0.91           \\
+NeRF         & 26.56          & 0.087          & 0.830           & 0.905          & 0.910           \\
 Neural RGB-D & 26.87          & 0.130          & 0.878          & 0.879          & 0.881          \\
 Ours         & \textbf{29.01} & \textbf{0.077} & \textbf{0.882} & \textbf{0.929} & \textbf{0.939} \\ \hline
 \end{tabular}%
 }
-\caption{在NeuralRGB-D数据上评估渲染颜色和深度的数值结果}
-\label{tab:omninerf}
 \end{table}
 
 在这里，本文同时展示使用本模型和基线模型渲染RGB图片和深度图的结果，如图\ref{fig:aus-rgb-qualitative}, \ref{fig:aus-depth-qualitative}, \ref{fig:omninerf-qualitative}, \ref{fig:dehazenerf-real-rgb}, \ref{fig:dehazenerf-synt-rgbd}。
@@ -180,6 +199,14 @@ Ours         & \textbf{29.01} & \textbf{0.077} & \textbf{0.882} & \textbf{0.929}
 \end{figure}
 
 \begin{figure}[ht]
+	\begin{center}
+	\includegraphics[width=0.9\textwidth]{undergraduate-thesis/images/omni-nerf/omninerf-stump.pdf}
+	\end{center}
+	\caption{本文方法于基线模型在公开数据集上的渲染效果对比图。}
+	\label{fig:omninerf-stump}
+\end{figure}
+
+\begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{undergraduate-thesis/images/experiments/exp-appearance-export.pdf}
     \caption{在带雾真实图像上渲染RGB图片的对比图}
@@ -194,34 +221,9 @@ Ours         & \textbf{29.01} & \textbf{0.077} & \textbf{0.882} & \textbf{0.929}
 \end{figure}
 
 
-\input{undergraduate-thesis/tables/aus-nvs-quant}
 
-\input{undergraduate-thesis/tables/aus-depth-quant}
-
-\input{undergraduate-thesis/tables/aus-tpf-quant}
-
-\subsubsection{带雾数据基线模型}
-
-
-
+\subsubsection{带雾数据实验设置}
 本文使用真实世界和合成数据集进行 RGB 比较。通过在观测数据上添加散射效果，并将模型重新输出的图片与观测数据对比，即可计算PSNR、SSIM和LPIPS等评价指标。这里介绍该实验中所使用的基线模型。
-
-\textbf{基于先验的方法}：
-对于基于先验的方法，我们选择 DCP~\cite{kaiming_he_single_2009} 作为代表。 DCP 方法的输入完全是模糊的 RGB 图像。
-
-\textbf{基于学习的方法}：
-对于基于学习的方法， 本文选择 FFA-Net~\cite{qin_ffa-net_2020}、AECR-Net~\cite{wu_contrastive_2021} 和 gUNet ~\cite{song_rethinking_2022}作为比较的基线模型。这里直接使用他们发布的代码中的预训练模型参数，并使用模糊的 RGB 图像作为输入。
-
-\textbf{基于NeRF直接去雾}：
-我们使用另一个表示为 "NeRF w/ na\"ive dehaze" 的基线，使用视角无关的 NeRF~\cite{mildenhall_nerf_2020} 直接在多视图模糊图像上进行训练，然后使用恒定阈值过滤掉低于它的所有体积密度渲染。
-
-\textbf{NeRF 相关基线模型}：
-本文还将所提出的方法与 NeDDF ~\cite{ueda_neural_2022} 进行了比较，后者将模糊的 RGB 图像和相机位姿作为输入。NeDDF 旨在为半透明对象建模而不是恢复几何形状。它的渲染步骤之一会生成表示表面的无符号距离函数 (UDF)。理论上，UDF 的零水平集的边界代表场景的表面。然而，在实践中，NeDDF 不会在模糊场景中收敛。本文尝试使用 NeRF 的蒸馏学习来提高其收敛性，但仅实现了部分收敛，甚至在最后也没有找到零集。
-
-\textbf{散射媒介基线中的 3D 重建}：
-本文还将与 ~\cite{fujimura_dehazing_2021} 中介绍的方法进行比较。它是 MVDepthNet 的改进版本，用于处理有雾的场景。使用基于 CNN 的网络提取特征，然后用于 3D 匹配。本文直接使用他们代码发布中的预训练模型参数。该基线的输入是模糊的 RGB 图像和相机位姿。遗憾的是，该基线在测试时未能返回任何有效的深度图，因此未显示在实验结果中。
-
-\input{undergraduate-thesis/tables/dehaze}
 
 \subsubsection{散射效应操控}
 为了展示对散射效应的操控，本文对一个训练好的带雾场景中的悬浮粒子性质进行编辑，展示了对雾浓度的改变、雾颜色的调整等多个不同的实验结果，如图\ref{fig:dehazenerf-manipulation}所示。本文的附录中列出了对雾属性进行操控的算法流程图。
@@ -239,18 +241,21 @@ Ours         & \textbf{29.01} & \textbf{0.077} & \textbf{0.882} & \textbf{0.929}
 
 \begin{table}[ht]
 \centering
+\caption{场景图模型的数值对比结果}
+\label{tab:scene-graphs}
 \resizebox{0.6\textwidth}{!}{%
 \begin{tabular}{llllll}
 \hline
                    & SRN   & NeRF  & NeRF-t & NSG            & Ours            \\ \hline
-PSNR $\uparrow$    & 18.83 & 23.34 & 24.18  & 26.66          & \textbf{27.159} \\
-SSIM $\uparrow$    & 0.59  & 0.662 & 0.677  & \textbf{0.806} & 0.798           \\
-LPIPS $\downarrow$ & 0.456 & 0.415 & 0.425  & 0.186          & \textbf{0.176}  \\ \hline
+PSNR $\uparrow$    & 18.83 & 23.34 & 24.18  & 26.66          & \textbf{27.16} \\
+SSIM $\uparrow$    & 0.59  & 0.66 & 0.68  & \textbf{0.81} & 0.80           \\
+LPIPS $\downarrow$ & 0.46 & 0.42 & 0.43  & 0.19          & \textbf{0.18}  \\ \hline
 \end{tabular}%
 }
-\caption{场景图模型的数值对比结果}
-\label{tab:scene-graphs}
 \end{table}
+
+\input{undergraduate-thesis/tables/tpf-ablation-networks-mega-nerf-depth}
+\input{undergraduate-thesis/tables/dehaze-ablation} 
 
 与更多基线方法的数值对比结果如表\ref{tab:scene-graphs}所示。
 
@@ -332,6 +337,7 @@ LPIPS $\downarrow$ & 0.456 & 0.415 & 0.425  & 0.186          & \textbf{0.176}  \
     \label{fig:time-pose function ablation mlp}
 \end{figure}
 
+
 \subsection{时间-轨迹隐函数TPF的消融实验}
 本文中使用一个一维多分辨率哈希体素网格计算TPF函数的数值，在实验过程中，本文也对比了其他隐式函数表达，如多层感知机（如图\ref{fig:time-pose function ablation mlp}）、普通体素网格（如图\ref{fig:time-pose function ablation grid}）、一维单分辨率哈希体素网格（$L=1$）。
 除此以外，本文还验证了速度约束项对于网络性能的结果，实验结构如表\ref{tab:ablation-network}所示。
@@ -348,8 +354,6 @@ LPIPS $\downarrow$ & 0.456 & 0.415 & 0.425  & 0.186          & \textbf{0.176}  \
 
 
 
-\input{undergraduate-thesis/tables/tpf-ablation-networks-mega-nerf-depth}
-
 \subsection{去雾方法消融实验}
 本文通过消融实验验证了所提出的方法设计。定量结果显示在表\ref{tab:dehaze-ablation-rgb}中，这里使用合成数据进行定量评估。表 \ref{tab:dehaze-ablation-rgb} 中的第 1 列显示了方法组件的不同组合。
 
@@ -362,7 +366,6 @@ LPIPS $\downarrow$ & 0.456 & 0.415 & 0.425  & 0.186          & \textbf{0.176}  \
 \textbf{多视图一致性控制的效果。}
 表 \ref{tab:dehaze-ablation-rgb} 中的第五行 (DCP-NeRF) 显示了使用 Dark Channel Prior~\cite{kaiming_he_single_2009} 首先对图像进行去雾并在去雾前的图像上训练 NeRF 模型的结果。结果表明 DCP 未能在多个视图中产生一致的结果。在表 \ref{tab:exp-image-quality} 中，它的图像恢复指标甚至比单独的 Dark Channel Prior 还要差。这可能是因为 NeRF 表示无法理解不一致的图像输出。
 
-\input{undergraduate-thesis/tables/dehaze-ablation} 
 
 
 \section{本章小结}

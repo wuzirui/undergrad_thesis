@@ -1,11 +1,11 @@
 \chapter{相关理论与方法}
 \label{chapter:related-work}
-本章将对混合神经隐式场相关理论和方法进行简要的介绍。在\ref{sec: related-work implicit scene representation learning}节中将介绍以神经辐射场\cite{mildenhall_nerf_2020}为代表的使用隐式函数进行场景表示学习的主流方法。纵观神经隐式场发展的历程，人们用来学习场景外观的地图表示方法经历了从纯隐式的多层感知机地图到半隐式的体素地图、低维张量地图的变革，在该节中将详细介绍这一变换的过程和内在原因。在\ref{sec: related-work realistic rendering}一节中，将介绍人们基于神经辐射场上为了使渲染更具真实感所提出的一系列方法，包括引入无界场景压缩、前后景分割等。在\ref{sec: related-work density-distance fields}一节中，我们将介绍辐射-距离混合场景表示的方法。在该节中，我们将首先分析单纯使用辐射场同时表示场景几何和外观所带来的二义性问题，接着从采样策略、体渲染方法、多元传感信息融合以及模型优化几个角度分别介绍相关理论。
+本章将对混合神经隐式场相关理论和方法进行简要的介绍。在\ref{sec: related-work implicit scene representation learning}节中将介绍以神经辐射场\cite{mildenhall_nerf_2020}为代表的使用隐式函数进行场景表示学习的主流方法。纵观神经隐式场发展的历程，人们用来学习场景外观的地图表示方法经历了从纯隐式的多层感知机地图到半隐式的体素地图、低维张量地图的变革，在该节中将详细介绍这一变换的过程和内在原因。在\ref{sec: related-work realistic rendering}一节中，将介绍人们基于神经辐射场上为了使渲染更具真实感所提出的一系列方法，包括引入无界场景压缩、前后景分割等。在\ref{sec: related-work density-distance fields}一节中将介绍辐射-距离混合场景表示的方法。该节将首先分析单纯使用辐射场同时表示场景几何和外观所带来的二义性问题，接着从采样策略、体渲染方法、多元传感信息融合以及模型优化几个角度分别介绍相关理论。
 
 \section{神经隐式场景表示学习}
 \label{sec: related-work implicit scene representation learning}
 
-神经隐式场景表示，即是将三维场景的几何、外观、语义等信息抽象为一个隐式表示的函数，通过神经网络的回归能力来拟合这些隐函数。在本节中，我们将介绍使用以神经辐射场和神经符号距离场为主的神经隐式表征进行场景表示学习的主要方法。在\ref{sec: related-work MLP-based neural implicit representations}节，我们将通过神经辐射场和DeepSDF介绍使用多层感知机表示场景隐式函数的基本概念，在\ref{sec: related-work grid-based implicit representations}节中介绍神经隐式场景表示的主干模型的改进。
+神经隐式场景表示，即是将三维场景的几何、外观、语义等信息抽象为一个隐式表示的函数，通过神经网络的回归能力来拟合这些隐函数。在本节将介绍使用以神经辐射场和神经符号距离场为主的神经隐式表征进行场景表示学习的主要方法。在\ref{sec: related-work MLP-based neural implicit representations}节将通过神经辐射场和DeepSDF介绍使用多层感知机表示场景隐式函数的基本概念，在\ref{sec: related-work grid-based implicit representations}节中介绍神经隐式场景表示的主干模型的改进。
 
 
 \subsection{基于多层感知机的场景表示}
@@ -26,7 +26,7 @@
     \label{eq:related-work radiance field}
 \end{equation}
 
-通过累计一条光线上三维点的辐射值，我们便可以实现在任意观察视角下光线的渲染。图\ref{fig:related-work NeRF pipeline}展示了NeRF方法的总体流程：
+通过累计一条光线上三维点的辐射值，便可以实现在任意观察视角下光线的渲染。图\ref{fig:related-work NeRF pipeline}展示了NeRF方法的总体流程：
 \begin{enumerate}
     \item [a] 在观察视角发射一条光线，并在其上采样若干个三维空间点，将他们的三维欧式坐标和观察角度组成一个5元组张量$(x_i,y_i,z_i,\theta,\phi)$；
     \item [b] 通过神经辐射场，得到采样点的隐函数值$(R_i,G_i,B_i,\sigma_i)$；
@@ -112,7 +112,7 @@
 除此以外，当使用密集体素网格重建三维隐式表面时，由于体素网格不能提供多层感知机中的平滑特性（本文将在\ref{sec: related-work density-distance fields}节中讨论该特性），重建的三维表面通常会出现嘈杂的现象（图\ref{fig:related-work monosdf result}）。
 
 \subsubsection{隐式体素参数网格地图}
-虽然上述的密集体素网格在渲染速度和效果上均有较大的提升，然而在面对更大规模的场景时，仅使用密集网格存储隐函数信息的网络表达能力并不足够，且使用密集网格进行表面重建也会遇到嘈杂的结果，为此，人们提出在网格中存储空间特征而非显式的隐函数值\cite{liu_neural_2021, takikawa_neural_2021, yu_monosdf_2022, huang_di-fusion_2021, peng_convolutional_2020}，并使用一个后续的多层感知机解码器来计算最终隐函数值。
+虽然上述的密集体素网格在渲染速度和效果上均有较大的提升，然而在面对更大规模的场景时，仅使用密集网格存储隐函数信息的网络表达能力并不足够，且使用密集网格进行表面重建也会遇到嘈杂的结果，为此，人们提出在网格中存储空间特征而非显式的隐函数值\cite{liu_neural_2021, takikawa_neural_2021, yu_monosdf_2022, huang_di-fusion_2021}，并使用一个后续的多层感知机解码器来计算最终隐函数值。
 
 记分辨率为$R\times R\times R$的参数网格为$\Phi_\theta$， 多层感知机解码器为$f_\theta$，则使用参数网格来计算隐式函数值可以表示为：
 \begin{equation}
@@ -155,7 +155,7 @@ $\mathtt{floor}$为下取整函数，$\mathtt{concat}$表示参数拼接。
 \end{equation}
 其中$h^l(\mathbf{x})$为哈希函数，在InstantNGP中，每个级别的参数网格使用不同的哈希函数：
 \begin{equation}
-    h^l(\mathbf{x}) = \left(\bigoplus_{i}x_i\pi_i^l\right) \text{mod} T,
+    h^l(\mathbf{x}) = \left(\bigoplus_{i}x_i\pi_i^l\right) \text{mod}\ T,
 \end{equation}
 $T, \pi^l$为随机大质数。
 
@@ -195,7 +195,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/hadamard-product.png}
+    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/related-work/hadamard-product.png}
     \caption{平面特征的逐元素加法（左）与乘法（右）的比较。在这两种情况下，假设每个平面中只有单个条目为+1，其余部分均为零，通过乘法可以选择单个 3D 点，但通过加法只能产生相交线。这说明乘法可以提高显式模型的表达能力\cite{fridovich-keil_k-planes_2023}。}
     \label{fig:related-work hadamard-product}
 \end{figure}
@@ -230,7 +230,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/NeRF ablation-PE.pdf}
+    \includegraphics[width=0.9\textwidth]{undergraduate-thesis/images/related-work/NeRF ablation-PE.pdf}
     \caption{位置编码对NeRF网络性能的影响\cite{mildenhall_nerf_2020}。}
     \label{fig:related-work nerf-PE-ablation}
 \end{figure}
@@ -248,7 +248,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/related-work/mipnerf-intersection.png}
+    \includegraphics[width=0.7\textwidth]{undergraduate-thesis/images/related-work/mipnerf-intersection.png}
     \caption{NeRF方法产生走样原因的示意图\cite{barron_mip-nerf_2021}。}
     \label{fig:related-work mip-nerf intersection}
 \end{figure}
@@ -257,7 +257,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/mipnerf-cone.png}
+    \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/related-work/mipnerf-cone.png}
     \caption{NeRF (a) 沿着从相机投影中心通过每个像素的光线进行采样，然后使用位置编码 (PE) $\gamma$ 对这些点进行编码以产生特征$\gamma(x)$。 Mip-NeRF (b) 对由相机像素定义的 3D 圆锥台进行推理，使用集成位置编码 (IPE) 对这些锥形截锥体进行特征化，使用多元高斯近似截锥体，然后计算积分 $E[\gamma(x)]$以近似超采样的效果\cite{barron_mip-nerf_2021}。}
     \label{fig:related-work mip-nerf cone tracing}
 \end{figure}
@@ -267,7 +267,7 @@ TensorRF (VM)使用一组向量 ($\mathbf{v}$) 和矩阵 ($\mathbf{M}$) 将辐�
 为了模拟对整个锥台进行超采样，Mip-NeRF提出用高斯椭球上位置编码的均值近似每个锥台内体积的位置编码的平均，即集成位置编码（Integrated Positional Encoding，IPE）。
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{undergraduate-thesis/images/related-work/mipnerf-encoding.png}
+    \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/related-work/mipnerf-encoding.png}
     \caption{NeRF（左）和集成位置编码（IPE）（右）的一维可视化。由于 NeRF 沿每条射线对点进行采样并对所有频率进行同等编码，因此高频 PE 特征混叠，从而导致渲染伪影。通过在每个区间上使用集成位置编码特征，当频率周期与被集成的间隔大小相近时，IPE特征的高频维度缩小到零，从而产生隐式编码大小的抗锯齿特征。\cite{barron_mip-nerf_2021}}
     \label{fig:related-work mip-nerf encoding}
 \end{figure}
@@ -341,7 +341,7 @@ UNISURF\cite{oechsle_unisurf_2021}在早期迭代期间，会使用类似NeRF中
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/related-work/unisurf-sampling.png}
+    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/related-work/unisurf-sampling.png}
     \caption{UNISURF\cite{oechsle_unisurf_2021}采样策略示意图}
     \label{fig:related-work unisurf-sampling}
 \end{figure}
@@ -408,7 +408,7 @@ VolSDF\cite{yariv_volume_2021}中给出了使用符号距离场估计的不透�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\textwidth]{undergraduate-thesis/images/related-work/neus conditions.png}
+    \includegraphics[width=0.7\textwidth]{undergraduate-thesis/images/related-work/neus conditions.png}
     \caption{NeuS\cite{wang_neus_2021}中提出的SDF到体密度映射函数的两个必要条件。左图所展示的传统解决方案并不能满足无偏性和遮挡感知的条件。}
     \label{fig: related-work neus conditions}
 \end{figure}
@@ -422,7 +422,7 @@ VolSDF\cite{yariv_volume_2021}中给出了使用符号距离场估计的不透�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{undergraduate-thesis/images/related-work/neus multiple-surfaces.png}
+    \includegraphics[width=0.6\textwidth]{undergraduate-thesis/images/related-work/neus multiple-surfaces.png}
     \caption{当射线和多个表面相交时，NeuS\cite{wang_neus_2021}提出的映射方案可以解决遮挡感知问题。}
     \label{fig:related-work occlusion-aware}
 \end{figure}
@@ -431,7 +431,7 @@ VolSDF\cite{yariv_volume_2021}中给出了使用符号距离场估计的不透�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.5\textwidth]{undergraduate-thesis/images/related-work/neural-rgbd comparison with NeRF.png}
+    \includegraphics[width=0.28\textwidth]{undergraduate-thesis/images/related-work/neural-rgbd comparison with NeRF.png}
     \caption{直接将NeRF方法添加深度监督损失函数不能解决形状-辐射二义性。}
     \label{fig:related-work neural-rgbd comparison with NeRF}
 \end{figure}
@@ -455,7 +455,7 @@ NeuralRGB-D 是第一个将深度输入用于混合隐式表达优化的工作\c
 本文将在第\ref{sec: related-work SDF optimization}节中介绍该方法的优化过程。通过引入深度监督，NeuralRGB-D可以获得可信的场景表面，通过混合隐式表征的加入，减弱形状-辐射二义性对于场景表示学习的影响。
 
 \subsection{优化混合隐式场景表示}
-当只需要优化神经辐射场时，大部分方法仅使用光度误差（公式\ref{eq: related-work photometric loss}）即可得到较好的优化结果，然而当我们组合不同的隐式场时，原先的单目标优化过程演变成为了一个多目标的优化过程，这对损失函数的设计带来了挑战，在本节中，我们介绍优化隐式场的几种常用损失函数。
+当只需要优化神经辐射场时，大部分方法仅使用光度误差（公式\ref{eq: related-work photometric loss}）即可得到较好的优化结果，然而当组合不同的隐式场时，原先的单目标优化过程演变成为了一个多目标的优化过程，这对损失函数的设计带来了挑战，本节介绍优化隐式场的几种常用损失函数。
 \begin{equation}
     \mathcal{L}_{color} = \sum_r||C(r)-\hat{C}(r)||_2^2
     \label{eq: related-work photometric loss}
